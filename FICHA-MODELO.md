@@ -1,10 +1,10 @@
 # FICHA-MODELO — el plano de la app que ya gana — FocusStep
 (se llena en Sesión 1, ANTES de construir; cosa juzgada como las demás fichas)
 
-- Estado: BORRADOR — revenue verificado por 2 señales independientes, pero varios campos del
-  plano de producto y ángulos de ads no se pudieron verificar con las herramientas disponibles
-  en este entorno (sin acceso a Meta Ads Library, Sensor Tower con login, ni Mobbin). Se marcan
-  NO ENCONTRADO explícitamente — no se inventan.
+- Estado: APROBADA — confirmada por el usuario el 2026-09-21. Revenue verificado por 2 señales
+  independientes; algunos campos del plano de producto y ángulos de ads quedan NO ENCONTRADO
+  (sin acceso a Meta Ads Library, Sensor Tower con login, ni Mobbin desde este entorno) —
+  documentado, no bloquea el eje de diferenciación ya decidido.
 
 ## 1. LA APP MODELO
 - Nombre: Finch — Self-Care Pet · Plataforma: iOS / Android · País/idioma: EEUU, global, inglés
@@ -80,6 +80,6 @@
   junto a Streaks y Habitz — ver ESTADO.md).
 
 ## Cierre
-- Fecha de cierre: 2026-09-21 · Aprobada por el usuario: pendiente de confirmación
+- Fecha de cierre: 2026-09-21 · Aprobada por el usuario: SÍ
 - Regla de caché: fuentes y fechas anotadas arriba en cada dato. Campos NO ENCONTRADO listados
   explícitamente en §4 y §6 — no se inventó ningún número.

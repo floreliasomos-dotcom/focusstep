@@ -1,6 +1,7 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-21 · Fase: Sesión 1 (Validación, Avatar, Monetización, Arquitectura) — en curso, previo a B5 (Plan Maestro)
+Última actualización: 2026-09-21 · Fase: Sesión 1 CERRADA (avatar confirmado por el usuario) —
+arrancando Sesión 2 (Identidad visual)
 
 ## Idea (validada, FLUJO B)
 
@@ -108,14 +109,14 @@ Pendiente Sesión 2: PASO 0 completo de 16-DIRECCION-DE-ARTE.md, hex definitivos
 
 ## Fichas creadas (Sesión 1)
 
-- `FICHA-MODELO.md`: BORRADOR — app modelo elegida: Finch (mecanismo de check-in sin culpa,
-  revenue probado con 2 señales independientes — ARR $30-40M bootstrapped + estimado Sensor
-  Tower/appsprint). Eje de diferenciación: audiencia LATAM/español + ángulo "organización de
-  vida sin culpa" en vez de "autocuidado" genérico. Pendiente de aprobación del usuario.
-- `FICHA-AVATAR.md`: BORRADOR — 10 frases VoC con fuente recolectadas (reseñas públicas de
+- `FICHA-MODELO.md`: APROBADA (2026-09-21) — app modelo elegida: Finch (mecanismo de check-in
+  sin culpa, revenue probado con 2 señales independientes — ARR $30-40M bootstrapped + estimado
+  Sensor Tower/appsprint). Eje de diferenciación: audiencia LATAM/español + ángulo "organización
+  de vida sin culpa" en vez de "autocuidado" genérico.
+- `FICHA-AVATAR.md`: APROBADA (2026-09-21) — 10 frases VoC con fuente (reseñas públicas de
   Streaks/Habitica/Finch + fuentes sobre sobrecarga de mujeres trabajadoras). Avatar primario:
-  Camila, 32, profesional con vida por organizar. Sub-avatar: persona con TDAH. Pendiente de
-  aprobación del usuario (regla: sin aprobación, prohibido derivar copy final de venta).
+  Camila, 32, profesional con vida por organizar. Sub-avatar: persona con TDAH. Confirmada por
+  el usuario — ya se puede derivar copy de venta de aquí en adelante.
 - `FICHA-MERCADO.md`: precio, ciclo de decisión y estacionalidad completados con fuente y fecha.
   Medios de pago, plazos de prueba/garantía reales de Hotmart quedan PENDIENTES hasta Sesión 6
   (requieren la cuenta de Hotmart, que crea el usuario). Documentado en su propia sección
@@ -141,10 +142,8 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 - FICHA-MODELO.md §6 (ángulos de ads de la competencia): no accesible sin Meta Ads Library/
   TikTok Creative Center autenticados — pendiente para Sesión 8 si se quiere profundizar antes
   de escribir los anuncios de adquisición.
-- FICHA-AVATAR.md y FICHA-MODELO.md: en estado BORRADOR, pendientes de que el usuario las
-  confirme explícitamente ("¿lo confirmas?") para pasar a APROBADA.
-
 ## Próximo paso
 
-Mostrar al usuario, en simple, el avatar ampliado (mujeres trabajadoras + TDAH) y pedir su
-confirmación para cerrar la Sesión 1 y pasar a la Sesión 2 (identidad visual).
+Sesión 1 cerrada. Arrancar Sesión 2 (Identidad visual): PASO 0 de 16-DIRECCION-DE-ARTE.md con
+la fusión ya decidida (Habitz + Streaks + Finch), 3 interpretaciones fieles renderizadas a
+375px, tokens CSS, FICHA-ARTE.md y el tour de la app.

@@ -1,7 +1,6 @@
 # FICHA DE AVATAR — FocusStep
 
-- Estado: BORRADOR (10 frases VoC recolectadas con fuente — pendiente de aprobación explícita
-  del usuario antes de pasar a APROBADA; en BORRADOR sigue PROHIBIDO derivar copy de venta final)
+- Estado: APROBADA — confirmada por el usuario el 2026-09-21 (10 frases VoC con fuente)
 
 ## El avatar (cliente ideal — UNA persona concreta)
 - Nombre/arquetipo: Camila, 32 años · profesional con carrera activa (ej. marketing, ventas,
@@ -120,4 +119,4 @@
 - ¿Hubo entrevistas propias (protocolo 44)?: NO — la investigación se hizo sobre reseñas
   públicas y fuentes secundarias, no entrevistas directas al avatar. Pendiente si se quiere
   profundizar antes de escalar tráfico pago.
-- Fecha de cierre: 2026-09-21 · Aprobada por el usuario: pendiente de confirmación
+- Fecha de cierre: 2026-09-21 · Aprobada por el usuario: SÍ
