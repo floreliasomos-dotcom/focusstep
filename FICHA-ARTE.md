@@ -78,8 +78,9 @@
   `direcciones-abc.html` (sección "Combinación elegida" al inicio + A/B/C archivadas debajo) ·
   verificado con screenshot en el navegador (fuentes en su clase real, sin emojis, mascota
   coherente, CTA en degradé cálido)
-- Tour de la app: PENDIENTE — se construye tras la confirmación final del usuario sobre esta
-  combinación recoloreada (`vista-previa-app.html`)
+- Tour de la app: `vista-previa-app.html` (5 vistas: Home con color-por-hábito, onboarding,
+  paywall, Reinicio Amigable, Modo Día Difícil) · aprobado por el usuario: SÍ (2026-09-21,
+  "me encanta — sigamos con este estilo", tras el ajuste de color por hábito)
 - Paleta derivada de: referencia del usuario (Habitz, paleta base) recalibrada a cálido por
   petición explícita + criterio de la tabla emoción→color del 16 · Dispositivo ownable: mascota
   blob propia
@@ -88,5 +89,5 @@
 - Modo (claro/oscuro): claro — derivado de la referencia del usuario (Habitz es clara) y del
   nicho (hábitos/bienestar rinde mejor en claro, ver 16 §0.5 regla 3)
 
-## Idioma UI: español (LATAM, tuteo neutro) · Fecha de cierre: PENDIENTE (falta confirmación
-final del usuario sobre la combinación recoloreada) · Aprobada por el usuario: PENDIENTE
+## Idioma UI: español (LATAM, tuteo neutro) · Fecha de cierre: 2026-09-21 · Aprobada por el
+usuario: SÍ — cosa juzgada desde aquí (no se renegocia pantalla a pantalla)

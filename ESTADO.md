@@ -1,7 +1,7 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-21 · Fase: Sesión 1 CERRADA (avatar confirmado por el usuario) —
-arrancando Sesión 2 (Identidad visual)
+Última actualización: 2026-09-21 · Fase: Sesión 2 CERRADA (identidad visual aprobada) —
+arrancando Sesión 3 (Página de ventas)
 
 ## Idea (validada, FLUJO B)
 
@@ -171,13 +171,18 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 - FICHA-MODELO.md §6 (ángulos de ads de la competencia): no accesible sin Meta Ads Library/
   TikTok Creative Center autenticados — pendiente para Sesión 8 si se quiere profundizar antes
   de escribir los anuncios de adquisición.
-- El usuario confirmó que le gusta la combinación recoloreada (terracota) y pidió construir el
-  tour. `vista-previa-app.html` ya existe (5 vistas: Home, onboarding, paywall, Reinicio
-  Amigable, Modo Día Difícil) — pendiente SOLO la aprobación explícita del usuario sobre el
-  tour en sí (1/2/3 del protocolo 54) para cerrar `FICHA-ARTE.md` con fecha y "Aprobada: SÍ".
+- El usuario pidió un ajuste antes de aprobar: quería color distinto POR SECCIÓN. Se le explicó
+  el riesgo (rompe cohesión de marca) y se propuso la alternativa color-POR-HÁBITO (CTA/mascota/
+  nav siempre en terracota; cada uno de los hasta 3 hábitos activos lleva su propio tag de color).
+  El usuario eligió esa alternativa. Aplicada y verificada en `vista-previa-app.html`.
+- `FICHA-ARTE.md` CERRADA Y APROBADA (2026-09-21) — "me encanta, sigamos con este estilo".
+  Cosa juzgada: toda pantalla nueva hereda este brand kit (terracota #E2703F, ámbar #F2A65A,
+  menta #45BF9A solo para "hecho", Baloo 2 + Nunito, mascota blob, radio 22px/pill).
+  `direcciones-abc.html` y `vista-previa-app.html` archivados en `docs/revisiones/` (incluidas
+  las opciones descartadas B-completa, como evidencia de la decisión).
 
 ## Próximo paso
 
-Presentar el tour (`vista-previa-app.html`) al usuario con la pregunta textual del protocolo 54
-(me encanta / ajusta un detalle / prefiero repensar). Con su "me encanta", cerrar FICHA-ARTE.md
-y pasar a la Sesión 3 (página de ventas).
+Sesión 3 — Página de ventas: leer `19-PAGINA-DE-VENTAS.md` (estructura canónica de 10 secciones)
++ `52-COPY-VISUALES-CONVERSION.md` + `55-DISENO-DE-LANDING.md`, y construir la landing con el
+brand kit ya aprobado y el copy derivado de `FICHA-AVATAR.md`.
