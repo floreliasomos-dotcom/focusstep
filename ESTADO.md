@@ -4,10 +4,14 @@
 
 ## Idea (validada, FLUJO B)
 
-FocusStep — app anti-abrumación de gestión de hábitos/rutinas para profesionales, estudiantes y
-personas con TDAH/sobrecarga laboral que abandonan sistemas de organización tradicionales por
-fatiga mental. Máximo 3 hábitos activos, modo "Un Solo Foco" (una sola tarjeta visible), sin
-rachas punitivas, "Reinicio Amigable" tras ausencia, "Modo Día Difícil" (reduce la meta al mínimo).
+FocusStep — app anti-abrumación de gestión de hábitos/rutinas. Avatar primario: mujeres
+trabajadoras con una vida por organizar (trabajo + casa + vida personal, sin tiempo para sí
+mismas). Avatar secundario: profesionales, estudiantes y personas con TDAH/sobrecarga laboral.
+Ambos comparten el mismo dolor dominante (culpa/abandono por sistemas que castigan fallar un
+día) y por eso conviven en una sola app sin dividir el producto — solo cambia el énfasis de
+algunas frases de copy (ver FICHA-AVATAR.md, sub-avatar secundario). Máximo 3 hábitos activos,
+modo "Un Solo Foco" (una sola tarjeta visible), sin rachas punitivas, "Reinicio Amigable" tras
+ausencia, "Modo Día Difícil" (reduce la meta al mínimo).
 
 Spec original completa del usuario (PRD + avatar Jim Edwards) recibida y usada como base — ver
 historial de conversación para el documento fuente completo.
@@ -102,6 +106,45 @@ Fusión decidida:
 Pendiente Sesión 2: PASO 0 completo de 16-DIRECCION-DE-ARTE.md, hex definitivos, tokens CSS,
 3 interpretaciones fieles (protocolo 54), FICHA-ARTE.md, tour de la app.
 
+## Fichas creadas (Sesión 1)
+
+- `FICHA-MODELO.md`: BORRADOR — app modelo elegida: Finch (mecanismo de check-in sin culpa,
+  revenue probado con 2 señales independientes — ARR $30-40M bootstrapped + estimado Sensor
+  Tower/appsprint). Eje de diferenciación: audiencia LATAM/español + ángulo "organización de
+  vida sin culpa" en vez de "autocuidado" genérico. Pendiente de aprobación del usuario.
+- `FICHA-AVATAR.md`: BORRADOR — 10 frases VoC con fuente recolectadas (reseñas públicas de
+  Streaks/Habitica/Finch + fuentes sobre sobrecarga de mujeres trabajadoras). Avatar primario:
+  Camila, 32, profesional con vida por organizar. Sub-avatar: persona con TDAH. Pendiente de
+  aprobación del usuario (regla: sin aprobación, prohibido derivar copy final de venta).
+- `FICHA-MERCADO.md`: precio, ciclo de decisión y estacionalidad completados con fuente y fecha.
+  Medios de pago, plazos de prueba/garantía reales de Hotmart quedan PENDIENTES hasta Sesión 6
+  (requieren la cuenta de Hotmart, que crea el usuario). Documentado en su propia sección
+  "Problemas conocidos" — no bloquea diseño ni copy, pero SÍ bloquea publicar una garantía con
+  plazo fijo hasta verificarla.
+
+## Economía unitaria (gate SUELO 1 de `40-UNIT-ECONOMICS.md`)
+
+FocusStep no usa IA generativa (fuera de alcance de la V1 — ver spec original), así que no hay
+costo variable por uso de modelo de lenguaje/imagen por usuario. El costo por usuario es
+prácticamente el de infraestructura (Supabase + Vercel, cubiertos por el tier gratuito a la
+escala de 300-500 usuarios) más la comisión de Hotmart (~9.9% + fee fijo, a confirmar en
+Sesión 6). A $4.99/mes, el margen bruto es sano en cualquier escenario razonable — el gate de
+costo (SUELO 1) pasa sin necesidad de modelar escenarios de COGS variable. Se revisita solo si
+en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso).
+
+## Problemas conocidos
+
+- FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
+  verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
+  entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de
+  cierre y `18-VENTA-HOTMART.md`).
+- FICHA-MODELO.md §6 (ángulos de ads de la competencia): no accesible sin Meta Ads Library/
+  TikTok Creative Center autenticados — pendiente para Sesión 8 si se quiere profundizar antes
+  de escribir los anuncios de adquisición.
+- FICHA-AVATAR.md y FICHA-MODELO.md: en estado BORRADOR, pendientes de que el usuario las
+  confirme explícitamente ("¿lo confirmas?") para pasar a APROBADA.
+
 ## Próximo paso
 
-Presentar Plan Maestro (B5) al usuario y esperar aprobación para arrancar Sesión 1 completa.
+Mostrar al usuario, en simple, el avatar ampliado (mujeres trabajadoras + TDAH) y pedir su
+confirmación para cerrar la Sesión 1 y pasar a la Sesión 2 (identidad visual).
