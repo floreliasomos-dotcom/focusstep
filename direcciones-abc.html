@@ -223,9 +223,168 @@
   .op-c .dia-dificil { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--text-2); text-decoration: underline; }
 
   .pie { max-width: 1180px; margin: 40px auto 0; font-size: 12.5px; color: #6a6a72; border-top: 1px solid #d0d0d6; padding-top: 14px; line-height: 1.6; }
+
+  /* ══════════ COMBINACIÓN ELEGIDA — paleta recalibrada a CÁLIDA (petición del usuario) ══════════
+     Justificación de color (18-DIRECCION-DE-ARTE §0.5 + matiz cultural LATAM): el avatar de
+     FocusStep (Cuidador/Inocente — "llega agotada, busca calma") mapea a durazno/terracota cálido,
+     saturación media-baja — la MISMA fila de la tabla emoción→color del 16 para "femenina,
+     bienestar, agotada, busca calma". Terracota/coral además: (a) en LATAM se lee cercano y cálido,
+     nunca corporativo-frío; (b) sobre un fondo claro da MÁS contraste/urgencia en el CTA que el
+     púrpura anterior (el púrpura/índigo es, además, el acento por defecto que más se repite en
+     apps hechas con IA — alejarnos de él ayuda a la genericidad); (c) el verde-menta se conserva
+     SOLO para "hecho/completado" (BJ Fogg: un color de éxito consistente motiva más que un número). */
+  .destacado {
+    max-width: 1180px; margin: 0 auto 44px; padding: 28px 24px 32px; border-radius: 28px;
+    background: linear-gradient(155deg, #fff7f0, #fdece0);
+    border: 1px solid #f3d9c4;
+    box-shadow: 0 20px 50px -20px rgb(210 120 60 / 0.28);
+  }
+  .destacado .etiqueta-elegida {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800;
+    letter-spacing: 0.04em; text-transform: uppercase; color: #b45322;
+    background: #ffe3cc; border-radius: 999px; padding: 5px 12px; margin-bottom: 10px;
+  }
+  .destacado h2.titulo-combi { font-size: 20px; font-weight: 700; color: #3a2418; }
+  .destacado p.desc-combi { margin-top: 6px; font-size: 13.5px; color: #7a5c46; max-width: 60ch; }
+  .destacado .contenido-combi { display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start; margin-top: 20px; }
+
+  .op-final {
+    --bg: #FBF2E9;
+    --surface: #FFFFFF;
+    --text-1: #3A2418;
+    --text-2: #8C7263;
+    --accent: #E2703F;        /* terracota cálido — CTA/mascota (antes púrpura) */
+    --coral: #F2A65A;         /* segunda nota cálida (badges, detalles) */
+    --menta: #45BF9A;         /* ÚNICO color reservado para "hecho" */
+    --radius-card: 22px;
+    --radius-btn: 999px;
+    --font-display: 'Baloo 2', monospace;
+    --font-body: 'Nunito', monospace;
+    --shadow-tinta: 226 112 63;
+  }
+  .op-final .especimen .esp-display { font-family: var(--font-display); }
+  .op-final .especimen .esp-body { font-family: var(--font-body); }
+  .op-final .telefono { background: var(--bg); }
+  .op-final .pantalla { font-family: var(--font-body); color: var(--text-1); padding: 0 18px; }
+  .op-final .statusbar { color: var(--text-1); }
+  .op-final .home-indicator { background: var(--text-1); }
+  .op-final .saludo { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--text-2); }
+  .op-final h3.titulo-a { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; }
+  .op-final .heroe {
+    margin-top: 14px; border-radius: var(--radius-card); position: relative;
+    border: 1.5px solid transparent;
+    background: linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(135deg, color-mix(in oklab, var(--accent) 45%, transparent), transparent 60%) border-box;
+    box-shadow: 0 10px 26px -10px rgb(var(--shadow-tinta) / 0.24);
+    padding: 20px 16px 16px;
+  }
+  .op-final .heroe .mascota-asoma { position: absolute; top: -18px; right: 14px; width: 44px; height: 40px; background: var(--accent); }
+  .op-final .heroe .label { font-size: 11.5px; font-weight: 700; color: var(--text-2); }
+  .op-final .heroe .dato { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.2; margin-top: 4px; }
+  .op-final .heroe .insight { margin-top: 6px; font-size: 12.5px; color: var(--accent); font-weight: 700; }
+  .op-final .franja { margin-top: 16px; display: flex; justify-content: space-between; gap: 4px; }
+  .op-final .dia { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .op-final .dia .letra-dia { font-size: 10px; font-weight: 700; color: var(--text-2); }
+  .op-final .dia .punto { width: 24px; height: 24px; border-radius: 50%; background: color-mix(in oklab, var(--text-2) 14%, transparent); }
+  .op-final .dia.hecho .punto { background: var(--menta); }
+  .op-final .dia.hoy .punto { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent); }
+  .op-final .nota-mascota { margin-top: 14px; border-radius: var(--radius-card); position: relative;
+    background: color-mix(in oklab, var(--accent) 7%, var(--surface));
+    border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
+    padding: 12px 14px 12px 14px; display: flex; gap: 10px; align-items: center; }
+  .op-final .nota-mascota p { font-size: 12px; color: var(--text-1); line-height: 1.5; font-style: italic; }
+  .op-final .cta { margin-top: 14px; margin-bottom: 0; border-radius: var(--radius-btn); background: var(--accent); color: #fff;
+    box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 34%, transparent); }
+  .op-final .dia-dificil { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--text-2); text-decoration: underline; }
+  .op-final .tabbar { border-top: 1px solid color-mix(in oklab, var(--text-2) 18%, transparent); background: color-mix(in oklab, var(--surface) 88%, transparent); }
+  .op-final .tabbar a.activa { color: var(--accent); }
+  .op-final .tabbar a.activa .tab-chip { background: color-mix(in oklab, var(--accent) 14%, transparent); }
 </style>
 </head>
 <body>
+
+<section class="destacado" aria-label="Combinación elegida">
+  <span class="etiqueta-elegida">✔ Combinación elegida — paleta recalibrada a cálida</span>
+  <h2 class="titulo-combi">Lo mejor de las 3, en una sola pantalla</h2>
+  <p class="desc-combi">La tarjeta única y la mascota de la A + la franja de 7 días de la C
+    (en vez del anillo grande de la B, para no repetir la mascota dos veces) + la frase
+    motivacional de la mascota de la C. Y el color pasa de morado a un cálido terracota,
+    la familia que mejor conecta con "agotada, busca calma" — tu avatar exacto.</p>
+
+  <div class="contenido-combi">
+    <div class="op-final" style="width:310px">
+      <div class="telefono">
+        <div class="statusbar">
+          <span>9:41</span>
+          <span class="der">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.8"/><rect x="4.5" y="5" width="3" height="6" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0.5" width="3" height="10.5" rx="0.8"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0"/><path d="M3.8 6.6a6.2 6.2 0 0 1 8.4 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><rect x="22.5" y="3.8" width="2" height="4.4" rx="1" fill="currentColor" opacity="0.4"/></svg>
+          </span>
+        </div>
+        <div class="pantalla">
+          <p class="saludo">Hola de nuevo</p>
+          <h3 class="titulo-a">Buenos días, Camila</h3>
+
+          <div class="heroe">
+            <span class="blob mascota-asoma"><span class="cara"><span class="ojo izq"></span><span class="ojo der"></span><span class="boca"></span></span></span>
+            <p class="label">Tu único paso de hoy</p>
+            <p class="dato">Estirar 5 minutos al despertar</p>
+            <p class="insight">Un mal día no borra nada — solo empieza de nuevo aquí</p>
+          </div>
+
+          <div class="franja">
+            <div class="dia hecho"><span class="letra-dia">L</span><span class="punto"></span></div>
+            <div class="dia hecho"><span class="letra-dia">M</span><span class="punto"></span></div>
+            <div class="dia hoy"><span class="letra-dia">M</span><span class="punto"></span></div>
+            <div class="dia"><span class="letra-dia">J</span><span class="punto"></span></div>
+            <div class="dia"><span class="letra-dia">V</span><span class="punto"></span></div>
+            <div class="dia"><span class="letra-dia">S</span><span class="punto"></span></div>
+            <div class="dia"><span class="letra-dia">D</span><span class="punto"></span></div>
+          </div>
+
+          <div class="nota-mascota">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E2703F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 2.6 6.9L22 9.3l-5.4 4.6 1.8 7.1L12 17l-6.4 4 1.8-7.1L2 9.3l7.4-.4Z"/></svg>
+            <p>"Un paso pequeño hoy también cuenta."</p>
+          </div>
+
+          <div class="cta">Completar</div>
+          <p class="dia-dificil">¿Día difícil? Reduce tu meta a lo mínimo</p>
+
+          <nav class="tabbar" aria-label="Navegación">
+            <a class="activa" href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>Hoy</a>
+            <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Progreso</a>
+            <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></span>Hábitos</a>
+            <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>Perfil</a>
+          </nav>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <div class="op-final" style="width:310px">
+      <p class="rotulo-frame">Así se vería la página que vende tu app</p>
+      <div class="hero-landing">
+        <span class="hl-badge">Sin culpa, sin rachas</span>
+        <h4>Cumple tus metas <em>sin que un mal día</em> se sienta un fracaso</h4>
+        <p class="hl-sub"><b>Un solo hábito a la vez.</b> Para profesionales y mujeres con la vida
+        llena de pendientes que ya probaron otras apps y las abandonaron.</p>
+        <div class="hl-cta">Empezar mi primer paso</div>
+        <p class="hl-prueba">7 días de prueba · cancela cuando quieras</p>
+      </div>
+      <div class="especimen" style="margin-top:24px">
+        <p class="esp-display">Baloo 2 — AaBbÑñ 0123</p>
+        <p class="esp-body">Nunito — El veloz murciélago hindú comía feliz cardillo y kiwi.</p>
+      </div>
+      <div class="paleta" aria-hidden="true" style="margin-top:10px">
+        <span style="background:#FBF2E9"></span><span style="background:#FFFFFF"></span>
+        <span style="background:#3A2418"></span><span style="background:#E2703F"></span>
+        <span style="background:#F2A65A"></span><span style="background:#45BF9A"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <header class="cabecera">
   <h1>Dirección de arte — 3 formas de mostrar tu pantalla principal, FocusStep</h1>

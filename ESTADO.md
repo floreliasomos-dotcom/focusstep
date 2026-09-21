@@ -123,7 +123,18 @@ por ser referencia-mandato — divergen solo en composición y tratamiento de la
 Verificado con screenshot en el navegador: fuentes cargaron en su clase real (Baloo 2 redondeada,
 Nunito sans — ninguna cayó al fallback monospace), sin emojis (iconos SVG en chip), mascota
 blob visible y coherente en las 3, botones CTA en degradé púrpura, hero de landing con badge +
-titular con palabra en acento + CTA en cada opción. Pendiente: elección del usuario.
+titular con palabra en acento + CTA en cada opción.
+
+El usuario eligió COMBINAR (salida 2): estructura de A (tarjeta única + mascota) + franja de
+7 días de C (en vez del anillo de B, para no repetir la mascota dos veces) + nota-mascota con
+frase de C. Además pidió recalibrar el color a CÁLIDO, pidiendo la opción óptima para conversión.
+Decisión: acento pasa de púrpura a terracota (#E2703F) — justificación completa en
+`FICHA-ARTE.md` (mapea exacto a la fila "agotada, busca calma" de la tabla emoción→color del 16,
+más contraste de CTA que el púrpura, y aleja a la app del look genérico de IA). Re-renderizado
+en `direcciones-abc.html` (sección "Combinación elegida") y verificado con screenshot: fuentes
+correctas, mascota coherente, CTA cálido, franja con menta solo en "hecho". `FICHA-ARTE.md`
+creada con este brand kit — queda en estado pendiente de la confirmación final del usuario
+sobre este re-render antes de construir el tour de la app.
 
 ## Fichas creadas (Sesión 1)
 
@@ -160,8 +171,11 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 - FICHA-MODELO.md §6 (ángulos de ads de la competencia): no accesible sin Meta Ads Library/
   TikTok Creative Center autenticados — pendiente para Sesión 8 si se quiere profundizar antes
   de escribir los anuncios de adquisición.
+- FICHA-ARTE.md creada pero el tour de la app (vista-previa-app.html) todavía NO existe: se
+  construye recién cuando el usuario confirme la combinación recoloreada (terracota) que se le
+  presentó en `direcciones-abc.html`. No se cierra la ficha sin ese tour aprobado.
+
 ## Próximo paso
 
-Sesión 1 cerrada. Arrancar Sesión 2 (Identidad visual): PASO 0 de 16-DIRECCION-DE-ARTE.md con
-la fusión ya decidida (Habitz + Streaks + Finch), 3 interpretaciones fieles renderizadas a
-375px, tokens CSS, FICHA-ARTE.md y el tour de la app.
+Sesión 2 en curso: mostrar al usuario la combinación recoloreada (paleta cálida) y, con su OK,
+construir el tour de la app (`vista-previa-app.html`) para cerrar `FICHA-ARTE.md`.
