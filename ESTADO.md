@@ -171,11 +171,13 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 - FICHA-MODELO.md §6 (ángulos de ads de la competencia): no accesible sin Meta Ads Library/
   TikTok Creative Center autenticados — pendiente para Sesión 8 si se quiere profundizar antes
   de escribir los anuncios de adquisición.
-- FICHA-ARTE.md creada pero el tour de la app (vista-previa-app.html) todavía NO existe: se
-  construye recién cuando el usuario confirme la combinación recoloreada (terracota) que se le
-  presentó en `direcciones-abc.html`. No se cierra la ficha sin ese tour aprobado.
+- El usuario confirmó que le gusta la combinación recoloreada (terracota) y pidió construir el
+  tour. `vista-previa-app.html` ya existe (5 vistas: Home, onboarding, paywall, Reinicio
+  Amigable, Modo Día Difícil) — pendiente SOLO la aprobación explícita del usuario sobre el
+  tour en sí (1/2/3 del protocolo 54) para cerrar `FICHA-ARTE.md` con fecha y "Aprobada: SÍ".
 
 ## Próximo paso
 
-Sesión 2 en curso: mostrar al usuario la combinación recoloreada (paleta cálida) y, con su OK,
-construir el tour de la app (`vista-previa-app.html`) para cerrar `FICHA-ARTE.md`.
+Presentar el tour (`vista-previa-app.html`) al usuario con la pregunta textual del protocolo 54
+(me encanta / ajusta un detalle / prefiero repensar). Con su "me encanta", cerrar FICHA-ARTE.md
+y pasar a la Sesión 3 (página de ventas).
