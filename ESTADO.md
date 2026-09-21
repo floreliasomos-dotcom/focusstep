@@ -36,8 +36,8 @@ historial de conversación para el documento fuente completo.
     semanal** (ej. "4 de 7 días esta semana") — corrige el error #1 de Streaks (castigar por
     no ser consecutivo).
   - La animación de gratificación visual de la "Primera Victoria" se extiende a CADA
-    "Completar", no solo el onboarding — refuerzo de dopamina inmediata, clave para retención TDAH
-    (evidencia: Kubbo/Finch).
+    acción de marcar un hábito como hecho, no solo al primer paso guiado del arranque —
+    refuerzo de dopamina inmediata, clave para retención TDAH (evidencia: Kubbo/Finch).
   - Nueva función (pedida por el usuario): **frases motivacionales/inspiracionales** — se
     entregan en 3 momentos: (1) rotación diaria en el header del Home, (2) tras completar un
     hábito (parte del momento de gratificación), (3) tono más suave en "Modo Día Difícil".
@@ -84,7 +84,7 @@ Espaciado:         aireado
 Sombras:           ninguna/sutil — flat color-block
 Íconos/detalle:    mascotas "blob" ilustradas (forma de ameba) con carita simple —
                    detalle firma a adoptar y adaptar
-Layout:            hero+cards (onboarding), lista (perfil), grid (calendario/mood)
+Layout:            hero+cards (arranque), columna vertical (perfil), grid (calendario/mood)
 Mood:              cálido, juguetón, amable
 ```
 
