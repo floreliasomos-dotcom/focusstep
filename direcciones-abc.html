@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="es" data-kit="abc-v2">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direcciones de arte A/B/C — FocusStep</title>
+
+<!-- Comparativa nacida de plantillas-codigo/direcciones-abc/plantilla.html (Regla Dura #0 del 54).
+     CON REFERENCIA (Habitz, mandato parcial): paleta/tipografía/mood IDÉNTICAS en las 3 opciones —
+     divergen SOLO en composición (eje 2) y dispositivo ownable (eje 4), tal como exige el 54 §
+     "CON referencia del usuario — 3 INTERPRETACIONES FIELES". -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background:
+      radial-gradient(1100px 520px at 12% -6%, #f7f7f9, transparent 62%),
+      radial-gradient(900px 460px at 92% 4%, #e2e2e9, transparent 58%),
+      linear-gradient(180deg, #ededf0, #e4e4e9);
+    color: #1c1c1f;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 32px 20px 64px;
+  }
+  .cabecera { max-width: 1180px; margin: 0 auto 12px; }
+  .cabecera h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .cabecera p.sub { margin-top: 6px; font-size: 14px; color: #55555c; max-width: 70ch; }
+
+  .salidas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .salidas span {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid #c9c9cf; border-radius: 999px;
+    padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: #3a3a40;
+    background: #f7f7f8;
+  }
+  .salidas b { color: #1c1c1f; }
+  .aviso-fuentes { max-width: 1180px; margin: 10px auto 28px; font-size: 12.5px; color: #6a6a72; }
+
+  .opciones { max-width: 1180px; margin: 0 auto; display: grid; gap: 40px;
+              grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+  .opcion { display: flex; flex-direction: column; gap: 18px; }
+
+  .meta { background: #f7f7f8; border: 1px solid #d9d9de; border-radius: 14px; padding: 18px; }
+  .meta .letra {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px; font-weight: 800; font-size: 15px;
+    color: #f7f7f8; background: #1c1c1f; margin-right: 8px;
+  }
+  .meta h2 { display: flex; align-items: center; font-size: 17px; font-weight: 700; }
+  .meta .direccion { margin-top: 4px; font-size: 13px; color: #55555c; }
+  .hipotesis { margin-top: 10px; font-size: 13px; line-height: 1.5; color: #3a3a40; }
+  .hipotesis .slot { background: #fff3c7; border-radius: 4px; padding: 1px 4px; font-style: italic; }
+  .meta ul.tokens { margin-top: 10px; list-style: none; font-size: 12px; color: #6a6a72;
+                    font-family: ui-monospace, monospace; line-height: 1.7; }
+
+  .especimen { margin-top: 12px; border-top: 1px solid #d9d9de; padding-top: 12px; }
+  .especimen .esp-display { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
+  .especimen .esp-body { margin-top: 4px; font-size: 13.5px; color: #3a3a40; }
+
+  .telefono {
+    width: 310px; margin: 0 auto; aspect-ratio: 9 / 19.5;
+    border: 10px solid #101014; border-radius: 46px;
+    box-shadow: 0 24px 60px rgb(20 18 24 / 0.28);
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .statusbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 22px 6px; font-size: 13px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .statusbar .der { display: flex; align-items: center; gap: 5px; }
+  .statusbar svg { display: block; }
+  .home-indicator {
+    position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%);
+    width: 116px; height: 5px; border-radius: 999px; opacity: 0.85;
+  }
+  .pantalla { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .chip-icono { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; }
+  .cta { display: flex; align-items: center; justify-content: center; height: 48px; font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+
+  .tabbar {
+    display: flex; align-items: stretch; justify-content: space-around;
+    margin: 12px -18px 0; padding: 8px 8px 16px;
+    border-top: 1px solid color-mix(in oklab, var(--text-2) 18%, transparent);
+    background: color-mix(in oklab, var(--surface) 88%, transparent);
+  }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 9.5px; font-weight: 600; color: var(--text-2); text-decoration: none; }
+  .tabbar .tab-chip { display: flex; align-items: center; justify-content: center; width: 36px; height: 26px; border-radius: 9px; }
+  .tabbar a.activa { color: var(--accent); }
+  .tabbar a.activa .tab-chip { background: color-mix(in oklab, var(--accent) 14%, transparent); }
+
+  .paleta { display: flex; gap: 8px; margin-top: 10px; }
+  .paleta span { width: 26px; height: 26px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.10), 0 1px 3px rgb(0 0 0 / 0.12); }
+
+  .rotulo-frame { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #85858e; margin-top: 2px; }
+  .hero-landing {
+    width: 310px; margin: 6px auto 0; border-radius: 20px; overflow: hidden;
+    border: 1px solid rgb(0 0 0 / 0.10); box-shadow: 0 16px 40px rgb(20 18 24 / 0.16);
+    background: var(--bg); color: var(--text-1); font-family: var(--font-body); padding: 22px 18px 18px;
+  }
+  .hero-landing .hl-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
+    border-radius: 999px; padding: 4px 10px;
+  }
+  .hero-landing h4 { font-family: var(--font-display); font-size: 23px; font-weight: 700; line-height: 1.16; letter-spacing: -0.01em; margin-top: 10px; }
+  .hero-landing h4 em { font-style: normal; color: var(--accent); }
+  .hero-landing .hl-sub { margin-top: 8px; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .hero-landing .hl-sub b { color: var(--text-1); font-weight: 700; }
+  .hero-landing .hl-cta {
+    margin-top: 14px; display: flex; align-items: center; justify-content: center;
+    height: 46px; border-radius: var(--radius-btn); font-size: 14.5px; font-weight: 700; color: #fff;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 86%, white), var(--accent));
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 10px 24px -6px color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+  .hero-landing .hl-prueba { margin-top: 10px; font-size: 11.5px; color: var(--text-2); text-align: center; }
+
+  /* ══════════ TOKENS COMPARTIDOS — mismos en las 3 opciones (referencia-mandato: Habitz) ══════════ */
+  .op-a, .op-b, .op-c {
+    --bg: #F6F2FC;
+    --surface: #FFFFFF;
+    --text-1: #2B2438;
+    --text-2: #837A93;
+    --accent: #8B5FC7;       /* púrpura Habitz (CTA/teclado) */
+    --coral: #FF8A65;        /* mascota / tags cálidos */
+    --menta: #4FC9A8;        /* mascota / tags fríos */
+    --radius-card: 22px;
+    --radius-btn: 999px;
+    --font-display: 'Baloo 2', monospace;   /* fallback-trampa */
+    --font-body: 'Nunito', monospace;       /* fallback-trampa */
+    --shadow-tinta: 139 95 199;
+  }
+  .op-a .especimen .esp-display, .op-b .especimen .esp-display, .op-c .especimen .esp-display { font-family: var(--font-display); }
+  .op-a .especimen .esp-body, .op-b .especimen .esp-body, .op-c .especimen .esp-body { font-family: var(--font-body); }
+  .op-a .telefono, .op-b .telefono, .op-c .telefono { background: var(--bg); }
+  .op-a .pantalla, .op-b .pantalla, .op-c .pantalla { font-family: var(--font-body); color: var(--text-1); padding: 0 18px; }
+  .op-a .statusbar, .op-b .statusbar, .op-c .statusbar { color: var(--text-1); }
+  .op-a .home-indicator, .op-b .home-indicator, .op-c .home-indicator { background: var(--text-1); }
+
+  /* Mascota blob — el dispositivo firma que Habitz aporta, adaptado a FocusStep */
+  .blob {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 61% 39% 55% 45% / 45% 55% 42% 58%;
+  }
+  .blob .cara { position: relative; }
+  .blob .ojo { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #2B2438; top: 40%; }
+  .blob .ojo.izq { left: 34%; } .blob .ojo.der { left: 58%; }
+  .blob .boca { position: absolute; width: 10px; height: 5px; border-bottom: 2px solid #2B2438; border-radius: 0 0 10px 10px; left: 40%; top: 54%; }
+
+  /* ── OPCIÓN A — "Un Solo Foco": héroe-dato + cards apiladas + mascota asomando ── */
+  .op-a .saludo { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--text-2); }
+  .op-a h3.titulo-a { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; }
+  .op-a .heroe {
+    margin-top: 14px; border-radius: var(--radius-card); position: relative;
+    border: 1.5px solid transparent;
+    background: linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(135deg, color-mix(in oklab, var(--accent) 45%, transparent), transparent 60%) border-box;
+    box-shadow: 0 10px 26px -10px rgb(var(--shadow-tinta) / 0.22);
+    padding: 20px 16px 16px;
+  }
+  .op-a .heroe .mascota-asoma { position: absolute; top: -18px; right: 14px; width: 44px; height: 40px; background: var(--coral); }
+  .op-a .heroe .label { font-size: 11.5px; font-weight: 700; color: var(--text-2); }
+  .op-a .heroe .dato { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.2; margin-top: 4px; }
+  .op-a .heroe .insight { margin-top: 6px; font-size: 12.5px; color: var(--accent); font-weight: 700; }
+  .op-a .card { margin-top: 10px; background: var(--surface); border-radius: var(--radius-card);
+    border: 1px solid color-mix(in oklab, var(--text-2) 18%, transparent); padding: 12px 14px; display: flex; gap: 12px; align-items: center; }
+  .op-a .chip-icono { border-radius: 14px; background: color-mix(in oklab, var(--menta) 16%, transparent); }
+  .op-a .card h4 { font-size: 13.5px; font-weight: 700; }
+  .op-a .card p { margin-top: 2px; font-size: 12px; color: var(--text-2); line-height: 1.4; }
+  .op-a .cta { margin-top: auto; margin-bottom: 0; border-radius: var(--radius-btn); background: var(--accent); color: #fff;
+    box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 32%, transparent); }
+  .op-a .dia-dificil { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--text-2); text-decoration: underline; }
+
+  /* ── OPCIÓN B — "Semana clara": anillo de cumplimiento (nunca racha) + mascota en el centro ── */
+  .op-b .encabezado-b { margin-top: 12px; text-align: center; }
+  .op-b .encabezado-b .periodo { font-size: 11.5px; font-weight: 700; color: var(--text-2); }
+  .op-b h3.titulo-b { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-top: 2px; }
+  .op-b .anillo-wrap { margin: 16px auto 0; position: relative; width: 148px; height: 148px; }
+  .op-b .anillo-wrap .centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .op-b .mascota-centro { width: 54px; height: 50px; background: var(--accent); margin-bottom: 4px; }
+  .op-b .anillo-wrap .pct-label { font-size: 11px; color: var(--text-2); font-weight: 700; }
+  .op-b .habito-unico { margin-top: 18px; background: var(--surface); border-radius: var(--radius-card);
+    border: 1.5px solid transparent;
+    background-image: linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, color-mix(in oklab, var(--accent) 40%, transparent), transparent 60%);
+    background-origin: border-box; background-clip: padding-box, border-box;
+    padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .op-b .habito-unico .chip-icono { border-radius: 14px; background: color-mix(in oklab, var(--coral) 16%, transparent); }
+  .op-b .habito-unico h4 { font-size: 14px; font-weight: 700; }
+  .op-b .habito-unico p { font-size: 11.5px; color: var(--text-2); margin-top: 2px; }
+  .op-b .cta { margin-top: auto; margin-bottom: 0; border-radius: var(--radius-btn); background: var(--accent); color: #fff;
+    box-shadow: 0 8px 24px color-mix(in oklab, var(--accent) 30%, transparent); }
+  .op-b .dia-dificil { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--text-2); text-decoration: underline; }
+
+  /* ── OPCIÓN C — "Tira de la semana": franja horizontal de 7 días + nota-mascota con frase ── */
+  .op-c .masthead { margin-top: 10px; text-align: center; }
+  .op-c .masthead .edicion { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+  .op-c h3.titulo-c { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.15; margin-top: 4px; }
+  .op-c .franja { margin-top: 16px; display: flex; justify-content: space-between; gap: 4px; }
+  .op-c .dia { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .op-c .dia .letra-dia { font-size: 10px; font-weight: 700; color: var(--text-2); }
+  .op-c .dia .punto { width: 26px; height: 26px; border-radius: 50%; background: color-mix(in oklab, var(--text-2) 14%, transparent); }
+  .op-c .dia.hecho .punto { background: var(--menta); }
+  .op-c .dia.hoy .punto { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent); }
+  .op-c .habito-card { margin-top: 18px; background: var(--surface); border-radius: var(--radius-card);
+    border: 1px solid color-mix(in oklab, var(--text-2) 18%, transparent); padding: 16px; text-align: center; }
+  .op-c .habito-card h4 { font-size: 15px; font-weight: 700; }
+  .op-c .habito-card p { font-size: 11.5px; color: var(--text-2); margin-top: 4px; }
+  .op-c .nota-mascota { margin-top: 12px; border-radius: var(--radius-card); position: relative;
+    background: color-mix(in oklab, var(--accent) 8%, var(--surface));
+    border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
+    padding: 12px 14px 12px 54px; }
+  .op-c .nota-mascota .mascota-mini { position: absolute; left: 10px; top: 10px; width: 34px; height: 32px; background: var(--menta); }
+  .op-c .nota-mascota p { font-size: 12px; color: var(--text-1); line-height: 1.5; font-style: italic; }
+  .op-c .cta { margin-top: auto; margin-bottom: 0; border-radius: var(--radius-btn); background: var(--accent); color: #fff;
+    box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 30%, transparent); font-family: var(--font-body); }
+  .op-c .dia-dificil { margin-top: 8px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--text-2); text-decoration: underline; }
+
+  .pie { max-width: 1180px; margin: 40px auto 0; font-size: 12.5px; color: #6a6a72; border-top: 1px solid #d0d0d6; padding-top: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <h1>Dirección de arte — 3 formas de mostrar tu pantalla principal, FocusStep</h1>
+  <p class="sub">
+    Misma paleta y misma tipografía en las 3 (la de tu referencia "Habitz") — lo que cambia es
+    CÓMO se organiza tu pantalla de "Un Solo Foco" y cómo se ve tu mascota propia en cada una.
+  </p>
+  <div class="salidas" role="list">
+    <span role="listitem"><b>1 · Elegir</b> A, B o C</span>
+    <span role="listitem"><b>2 · Combinar</b> («la B pero con la mascota de la A»)</span>
+    <span role="listitem"><b>3 · Pedir otras 3</b> distintas</span>
+    <span role="listitem"><b>4 · Ajustar un detalle</b> («más morado, menos coral»)</span>
+  </div>
+</header>
+<p class="aviso-fuentes">Ábrelo con conexión a internet: las fuentes (Baloo 2 y Nunito) cargan desde Google Fonts.</p>
+
+<div class="opciones">
+
+  <!-- ═══════════════════ OPCIÓN A — Un Solo Foco (hero-dato + cards) ═══════════════════ -->
+  <section class="opcion op-a" aria-label="Opción A">
+    <div class="meta">
+      <h2><span class="letra">A</span> Tarjeta Única</h2>
+      <p class="direccion">Tu hábito de hoy en una tarjeta grande, con tu mascota asomando arriba
+        para saludarte. Debajo, solo dos notas simples — nunca una lista larga.</p>
+      <p class="hipotesis"><strong>Hipótesis de conversión:</strong>
+        <span class="slot">Camila abre la app cansada — una sola tarjeta grande, sin nada más que
+        decidir, es lo que más baja la barrera para tocar "Completar" hoy mismo.</span>
+      </p>
+      <ul class="tokens">
+        <li>--bg #F6F2FC · --accent #8B5FC7 (Habitz, sin tocar)</li>
+        <li>radius 22px/pill · sombra tintada 139·95·199</li>
+      </ul>
+      <div class="paleta" aria-hidden="true">
+        <span style="background:#F6F2FC"></span><span style="background:#FFFFFF"></span>
+        <span style="background:#2B2438"></span><span style="background:#8B5FC7"></span>
+        <span style="background:#FF8A65"></span><span style="background:#4FC9A8"></span>
+      </div>
+      <div class="especimen">
+        <p class="esp-display">Baloo 2 — AaBbÑñ 0123</p>
+        <p class="esp-body">Nunito — El veloz murciélago hindú comía feliz cardillo y kiwi.</p>
+      </div>
+    </div>
+
+    <div class="telefono">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="der">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.8"/><rect x="4.5" y="5" width="3" height="6" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0.5" width="3" height="10.5" rx="0.8"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0"/><path d="M3.8 6.6a6.2 6.2 0 0 1 8.4 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><rect x="22.5" y="3.8" width="2" height="4.4" rx="1" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="pantalla">
+        <p class="saludo">Hola de nuevo</p>
+        <h3 class="titulo-a">Buenos días, Camila</h3>
+
+        <div class="heroe">
+          <span class="blob mascota-asoma"><span class="cara"><span class="ojo izq"></span><span class="ojo der"></span><span class="boca"></span></span></span>
+          <p class="label">Tu único paso de hoy</p>
+          <p class="dato">Estirar 5 minutos al despertar</p>
+          <p class="insight">Un mal día no borra nada — solo empieza de nuevo aquí</p>
+        </div>
+
+        <div class="card">
+          <span class="chip-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4FC9A8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <div><h4>Esta semana: 4 de 7 días</h4><p>Vas bien — no hace falta ser perfecta</p></div>
+        </div>
+        <div class="card">
+          <span class="chip-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A65" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.6 6.9L22 9.3l-5.4 4.6 1.8 7.1L12 17l-6.4 4 1.8-7.1L2 9.3l7.4-.4Z"/></svg></span>
+          <div><h4>"Un paso pequeño hoy también cuenta."</h4><p>Frase del día</p></div>
+        </div>
+
+        <div class="cta">Completar</div>
+        <p class="dia-dificil">¿Día difícil? Reduce tu meta a lo mínimo</p>
+
+        <nav class="tabbar" aria-label="Navegación">
+          <a class="activa" href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>Hoy</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Progreso</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></span>Hábitos</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>Perfil</a>
+        </nav>
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <p class="rotulo-frame">Así se vería la página que vende tu app</p>
+    <div class="hero-landing">
+      <span class="hl-badge">Sin culpa, sin rachas</span>
+      <h4>Cumple tus metas <em>sin que un mal día</em> se sienta un fracaso</h4>
+      <p class="hl-sub"><b>Un solo hábito a la vez.</b> Para profesionales y mujeres con la vida
+      llena de pendientes que ya probaron otras apps y las abandonaron.</p>
+      <div class="hl-cta">Empezar mi primer paso</div>
+      <p class="hl-prueba">7 días de prueba · cancela cuando quieras</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ OPCIÓN B — Semana Clara (anillo + mascota al centro) ═══════════════════ -->
+  <section class="opcion op-b" aria-label="Opción B">
+    <div class="meta">
+      <h2><span class="letra">B</span> Semana Clara</h2>
+      <p class="direccion">Tu semana como un anillo suave con tu mascota en el centro —
+        nunca un número en rojo, solo cuánto llevas.</p>
+      <p class="hipotesis"><strong>Hipótesis de conversión:</strong>
+        <span class="slot">Ver el avance de la semana entera (no un día perdido) ayuda a
+        quien ya abandonó apps por una sola racha rota a quedarse.</span>
+      </p>
+      <ul class="tokens">
+        <li>--bg #F6F2FC · --accent #8B5FC7 (Habitz, sin tocar)</li>
+        <li>radius 22px/pill · sombra tintada 139·95·199</li>
+      </ul>
+      <div class="paleta" aria-hidden="true">
+        <span style="background:#F6F2FC"></span><span style="background:#FFFFFF"></span>
+        <span style="background:#2B2438"></span><span style="background:#8B5FC7"></span>
+        <span style="background:#FF8A65"></span><span style="background:#4FC9A8"></span>
+      </div>
+      <div class="especimen">
+        <p class="esp-display">Baloo 2 — AaBbÑñ 0123</p>
+        <p class="esp-body">Nunito — El veloz murciélago hindú comía feliz cardillo y kiwi.</p>
+      </div>
+    </div>
+
+    <div class="telefono">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="der">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.8"/><rect x="4.5" y="5" width="3" height="6" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0.5" width="3" height="10.5" rx="0.8"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0"/><path d="M3.8 6.6a6.2 6.2 0 0 1 8.4 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><rect x="22.5" y="3.8" width="2" height="4.4" rx="1" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="pantalla">
+        <div class="encabezado-b">
+          <p class="periodo">Lun 4 – Dom 10</p>
+          <h3 class="titulo-b">Vas bien esta semana</h3>
+        </div>
+
+        <div class="anillo-wrap">
+          <svg width="148" height="148" viewBox="0 0 148 148" role="img" aria-label="4 de 7 días esta semana">
+            <circle cx="74" cy="74" r="64" fill="none" stroke-width="12" stroke="rgba(139,95,199,0.14)"/>
+            <circle cx="74" cy="74" r="64" fill="none" stroke-width="12" stroke="#8B5FC7" stroke-linecap="round"
+                    stroke-dasharray="402.1" stroke-dashoffset="172.3" transform="rotate(-90 74 74)"/>
+          </svg>
+          <div class="centro">
+            <span class="blob mascota-centro"><span class="cara"><span class="ojo izq"></span><span class="ojo der"></span><span class="boca"></span></span></span>
+            <span class="pct-label">4 de 7 días</span>
+          </div>
+        </div>
+
+        <div class="habito-unico">
+          <span class="chip-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A65" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><h4>Estirar 5 minutos al despertar</h4><p>Tu único hábito activo de hoy</p></div>
+        </div>
+
+        <div class="cta">Completar</div>
+        <p class="dia-dificil">¿Día difícil? Reduce tu meta a lo mínimo</p>
+
+        <nav class="tabbar" aria-label="Navegación">
+          <a class="activa" href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>Hoy</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Progreso</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></span>Hábitos</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>Perfil</a>
+        </nav>
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <p class="rotulo-frame">Así se vería la página que vende tu app</p>
+    <div class="hero-landing">
+      <span class="hl-badge">Tu semana, no tu racha</span>
+      <h4>Por fin una app que <em>no te hace sentir culpable</em></h4>
+      <p class="hl-sub"><b>Mide tu semana, no tu perfección.</b> 4 de 7 días también es una
+      buena semana — sin castigos ni números en rojo.</p>
+      <div class="hl-cta">Ver mi semana clara</div>
+      <p class="hl-prueba">7 días de prueba · cancela cuando quieras</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ OPCIÓN C — Tira de la Semana (franja + nota-mascota) ═══════════════════ -->
+  <section class="opcion op-c" aria-label="Opción C">
+    <div class="meta">
+      <h2><span class="letra">C</span> Tira de la Semana</h2>
+      <p class="direccion">Los 7 días de la semana en una franja de puntos de colores, y tu
+        mascota te deja una notita con una frase para hoy.</p>
+      <p class="hipotesis"><strong>Hipótesis de conversión:</strong>
+        <span class="slot">La frase motivacional de la mascota conecta con quien busca sentirse
+        acompañada, no solo medida — el pedido explícito de esta versión de la app.</span>
+      </p>
+      <ul class="tokens">
+        <li>--bg #F6F2FC · --accent #8B5FC7 (Habitz, sin tocar)</li>
+        <li>radius 22px/pill · sombra tintada 139·95·199</li>
+      </ul>
+      <div class="paleta" aria-hidden="true">
+        <span style="background:#F6F2FC"></span><span style="background:#FFFFFF"></span>
+        <span style="background:#2B2438"></span><span style="background:#8B5FC7"></span>
+        <span style="background:#FF8A65"></span><span style="background:#4FC9A8"></span>
+      </div>
+      <div class="especimen">
+        <p class="esp-display">Baloo 2 — AaBbÑñ 0123</p>
+        <p class="esp-body">Nunito — El veloz murciélago hindú comía feliz cardillo y kiwi.</p>
+      </div>
+    </div>
+
+    <div class="telefono">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="der">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.8"/><rect x="4.5" y="5" width="3" height="6" rx="0.8"/><rect x="9" y="3" width="3" height="8" rx="0.8"/><rect x="13.5" y="0.5" width="3" height="10.5" rx="0.8"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0"/><path d="M3.8 6.6a6.2 6.2 0 0 1 8.4 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><rect x="22.5" y="3.8" width="2" height="4.4" rx="1" fill="currentColor" opacity="0.4"/></svg>
+        </span>
+      </div>
+      <div class="pantalla">
+        <div class="masthead">
+          <p class="edicion">Martes · tu semana</p>
+          <h3 class="titulo-c">Hola, Camila</h3>
+        </div>
+
+        <div class="franja">
+          <div class="dia hecho"><span class="letra-dia">L</span><span class="punto"></span></div>
+          <div class="dia hecho"><span class="letra-dia">M</span><span class="punto"></span></div>
+          <div class="dia hoy"><span class="letra-dia">M</span><span class="punto"></span></div>
+          <div class="dia"><span class="letra-dia">J</span><span class="punto"></span></div>
+          <div class="dia"><span class="letra-dia">V</span><span class="punto"></span></div>
+          <div class="dia"><span class="letra-dia">S</span><span class="punto"></span></div>
+          <div class="dia"><span class="letra-dia">D</span><span class="punto"></span></div>
+        </div>
+
+        <div class="habito-card">
+          <h4>Estirar 5 minutos al despertar</h4>
+          <p>Tu único paso de hoy</p>
+        </div>
+
+        <div class="nota-mascota">
+          <span class="blob mascota-mini"><span class="cara"><span class="ojo izq"></span><span class="ojo der"></span><span class="boca"></span></span></span>
+          <p>"Un paso pequeño hoy también cuenta."</p>
+        </div>
+
+        <div class="cta">Completar</div>
+        <p class="dia-dificil">¿Día difícil? Reduce tu meta a lo mínimo</p>
+
+        <nav class="tabbar" aria-label="Navegación">
+          <a class="activa" href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>Hoy</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Progreso</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></span>Hábitos</a>
+          <a href="#"><span class="tab-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>Perfil</a>
+        </nav>
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <p class="rotulo-frame">Así se vería la página que vende tu app</p>
+    <div class="hero-landing">
+      <span class="hl-badge">Acompañada, no medida</span>
+      <h4>Una app que <em>te habla bonito</em>, no que te castiga</h4>
+      <p class="hl-sub"><b>Tu mascota te acompaña cada día.</b> Una frase, un paso, y sigues —
+      sin listas infinitas de pendientes.</p>
+      <div class="hl-cta">Conocer a mi mascota</div>
+      <p class="hl-prueba">7 días de prueba · cancela cuando quieras</p>
+    </div>
+  </section>
+
+</div>
+
+<footer class="pie">
+  Referencia-mandato parcial (Habitz): paleta #F6F2FC/#8B5FC7/#FF8A65/#4FC9A8 y tipografía
+  Baloo 2 + Nunito IDÉNTICAS en las 3 — solo cambia la composición de la pantalla "Un Solo
+  Foco" y el tratamiento de la mascota (dispositivo ownable). Fusión de líderes: Streaks
+  (minimalismo de foco único), Finch (mascota cálida, sin su sobrecarga de opciones).
+  Marcador data-kit="abc-v2" del &lt;html&gt; intacto. Elección y descartadas → FICHA-ARTE.md.
+</footer>
+
+</body>
+</html>

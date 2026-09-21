@@ -104,8 +104,26 @@ Fusión decidida:
 - Diferenciador propio (mundo del sujeto): la mascota reacciona al "Reinicio Amigable" con un
   gesto propio de bienvenida (no disponible en ningún líder — dispositivo ownable).
 
-Pendiente Sesión 2: PASO 0 completo de 16-DIRECCION-DE-ARTE.md, hex definitivos, tokens CSS,
-3 interpretaciones fieles (protocolo 54), FICHA-ARTE.md, tour de la app.
+Ruta de diseño: réplica/interpretación de referencia (el usuario dio la captura de Habitz antes
+de esta sesión — se omite la pregunta del PASO 0 de 54, se va directo a interpretaciones fieles).
+
+Hex definitivos fijados (tomados de Habitz, sin desafinar): --bg #F6F2FC · --surface #FFFFFF ·
+--text-1 #2B2438 · --text-2 #837A93 · --accent #8B5FC7 (púrpura) · --coral #FF8A65 ·
+--menta #4FC9A8 · radius 22px/pill · tipografía Baloo 2 (display) + Nunito (body) — combinación
+probada (Duolingo usa Feather Bold redondeada → Nunito/Baloo 2, tabla de líderes del 16).
+
+`direcciones-abc.html` construido desde el kit (plantillas-codigo/direcciones-abc/, marcador
+data-kit="abc-v2" intacto) con 3 INTERPRETACIONES FIELES (paleta/tipografía idénticas en las 3,
+por ser referencia-mandato — divergen solo en composición y tratamiento de la mascota):
+- Opción A "Tarjeta Única": hero-card + 2 módulos apilados, mascota asomando en la tarjeta.
+- Opción B "Semana Clara": anillo de cumplimiento semanal (4/7, nunca racha) con la mascota al
+  centro — la representación visual de la decisión "% semanal" de la Sesión 1.
+- Opción C "Tira de la Semana": franja de 7 puntos + nota-mascota con la frase motivacional
+  (el feature pedido por el usuario), como bocadillo de texto.
+Verificado con screenshot en el navegador: fuentes cargaron en su clase real (Baloo 2 redondeada,
+Nunito sans — ninguna cayó al fallback monospace), sin emojis (iconos SVG en chip), mascota
+blob visible y coherente en las 3, botones CTA en degradé púrpura, hero de landing con badge +
+titular con palabra en acento + CTA en cada opción. Pendiente: elección del usuario.
 
 ## Fichas creadas (Sesión 1)
 
