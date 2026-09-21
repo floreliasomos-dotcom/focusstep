@@ -61,6 +61,15 @@
 - El verde-menta se reserva EXCLUSIVAMENTE para el estado "hecho" (nunca decorativo) — refuerzo
   de reconocimiento consistente (BJ Fogg: un color de éxito fijo motiva más que una cifra).
 
+## Color por hábito (ajuste pedido por el usuario tras ver el tour)
+- El usuario preguntó si cada SECCIÓN de la app podía tener un color distinto. Se recomendó en
+  cambio color por HÁBITO (no por sección): mantiene el CTA, la mascota y la barra de navegación
+  siempre en terracota (consistencia de marca — "esto es lo que se toca"), y cada uno de los
+  hasta 3 hábitos activos lleva un tag/etiqueta de color propio (ej. coral, menta, ámbar) sobre
+  su tarjeta. El usuario eligió esta opción (1) sobre recolorear secciones completas (2).
+- Verificado en `vista-previa-app.html` (V1 Home): tag "Rutina de mañana" en ámbar, CTA y
+  mascota siguen en terracota.
+
 ## Trazabilidad y vetos
 - Ruta de diseño: interpretaciones fieles (referencia parcial + pedido explícito de fusión)
 - Protocolo A/B/C: opción elegida = COMBINACIÓN (estructura de A + franja de C + nota-mascota
