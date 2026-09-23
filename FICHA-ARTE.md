@@ -35,9 +35,14 @@
   completar, sin fuegos artificiales) · radio tendencial 20-24px
 
 ## Brand kit final
-- Fondo: #FBF2E9 · Superficie: #FFFFFF · Texto 1º/2º: #3A2418 / #8C7263
-- Acento: #E2703F terracota cálido (SOLO en: CTA, mascota, dato activo, tab activo) ·
-  2ª nota: #F2A65A ámbar cálido (badges/detalles secundarios)
+- Fondo: #FBF2E9 · Superficie: #FFFFFF · Texto 1º/2º/3º: #3A2418 / #6D5849 / #75604F
+- Acento: #BD5227 terracota cálido — AJUSTADO desde el #E2703F del tour (mirando la pantalla
+  se ve casi igual, pero #E2703F daba solo 3.17:1 de contraste con texto blanco encima, por
+  debajo del mínimo AA de 4.5:1; #BD5227 da 4.77:1). Mismo hue, un poco más profundo — el
+  cambio es imperceptible a simple vista pero SÍ importa para accesibilidad y para que el
+  texto sobre los botones se lea bien. Ver verificación en "Contraste AA" abajo.
+  Uso: SOLO en CTA, mascota, dato activo, tab activo · 2ª nota: #F2A65A ámbar cálido
+  (badges/detalles — NUNCA con texto encima, no pasa AA)
 - Semánticos: éxito/hecho #45BF9A menta (ÚNICO uso — universal "hecho", nunca ambiguo con el
   acento) · error: por definir en Sesión 5-6 con ícono, nunca solo color (regla daltonismo)
 - Display: Baloo 2 (pesos 600/700/800) · Body: Nunito (pesos 400/600/700)
@@ -60,6 +65,13 @@
   IA — moverse a terracota también aleja a FocusStep de ese look genérico.
 - El verde-menta se reserva EXCLUSIVAMENTE para el estado "hecho" (nunca decorativo) — refuerzo
   de reconocimiento consistente (BJ Fogg: un color de éxito fijo motiva más que una cifra).
+
+## Contraste AA (verificado con fórmula WCAG, no a ojo)
+- Texto 1º #3A2418 vs fondo #FBF2E9: 13.1:1 · vs superficie #FFFFFF: 14.5:1 → pasa sobrado
+- Texto 2º #6D5849 vs fondo: 6.0:1 · vs superficie: 6.7:1 · vs hundido #F3E3D3: 5.3:1 → pasa
+- Texto 3º #75604F vs fondo: 5.4:1 · vs superficie: 5.9:1 · vs hundido: 4.7:1 → pasa
+- Acento #BD5227 con texto blanco encima (botones): 4.8:1 → pasa (mínimo 4.5:1)
+- Acento vs fondo (uso como ícono/dato, umbral UI 3:1): 4.3:1 → pasa sobrado
 
 ## Color por hábito (ajuste pedido por el usuario tras ver el tour)
 - El usuario preguntó si cada SECCIÓN de la app podía tener un color distinto. Se recomendó en
