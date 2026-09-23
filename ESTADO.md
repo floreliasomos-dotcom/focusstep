@@ -1,7 +1,8 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-21 · Fase: Sesión 2 CERRADA (identidad visual aprobada) —
-arrancando Sesión 3 (Página de ventas)
+Última actualización: 2026-09-22 · Fase: Sesión 3 — página de ventas CONSTRUIDA y APROBADA
+por el revisor-visual (LISTA: 36/40 usabilidad, 19/20 craft, 18/20 copy) — lista para Sesión 4
+(onboarding, paywall y login)
 
 ## Idea (validada, FLUJO B)
 
@@ -176,13 +177,24 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
   nav siempre en terracota; cada uno de los hasta 3 hábitos activos lleva su propio tag de color).
   El usuario eligió esa alternativa. Aplicada y verificada en `vista-previa-app.html`.
 - `FICHA-ARTE.md` CERRADA Y APROBADA (2026-09-21) — "me encanta, sigamos con este estilo".
-  Cosa juzgada: toda pantalla nueva hereda este brand kit (terracota #E2703F, ámbar #F2A65A,
-  menta #45BF9A solo para "hecho", Baloo 2 + Nunito, mascota blob, radio 22px/pill).
+  Cosa juzgada: toda pantalla nueva hereda este brand kit (terracota #BD5227 — ajustado desde
+  el #E2703F del tour por contraste AA, ver FICHA-ARTE.md — ámbar #F2A65A, menta #45BF9A solo
+  para "hecho", Baloo 2 + Nunito, mascota blob, radio 22px/pill).
   `direcciones-abc.html` y `vista-previa-app.html` archivados en `docs/revisiones/` (incluidas
   las opciones descartadas B-completa, como evidencia de la decisión).
+- Landing (Sesión 3) CONSTRUIDA y aprobada por el revisor-visual independiente en tercera
+  pasada: LISTA — 36/40 usabilidad, 19/20 craft, 18/20 copy (veredicto en
+  `docs/revisiones/landing-veredicto.md`, screenshot en `docs/revisiones/landing-375.png`).
+  Pendientes de pulido que el revisor marcó como NO bloqueantes: (a) nombrar la garantía con
+  plazo real en cuanto Hotmart esté configurado (Sesión 6) — hasta entonces la Oferta usa
+  "cancela en 1 clic, sin preguntas" en vez de una promesa de reembolso inventada; (b) sumar
+  prueba social real (testimonio/cifra) una vez existan usuarios — día 1 no se inventa un
+  número; (c) animación de conteo (count-up) en los precios de Oferta — mejora menor de pulido.
 
 ## Próximo paso
 
-Sesión 3 — Página de ventas: leer `19-PAGINA-DE-VENTAS.md` (estructura canónica de 10 secciones)
-+ `52-COPY-VISUALES-CONVERSION.md` + `55-DISENO-DE-LANDING.md`, y construir la landing con el
-brand kit ya aprobado y el copy derivado de `FICHA-AVATAR.md`.
+Sesión 4 — Onboarding, paywall y login: leer `02B-ONBOARDING-Y-PAYWALL.md` +
+`50-DISENO-ONBOARDING-PAYWALL.md` + `52-COPY-VISUALES-CONVERSION.md` + `15-PATRONES-UX.md` +
+`26-AUTH-MODERNO.md` + `24-GAMIFICACION.md`, y reemplazar los placeholders de `/onboarding` y
+`/entrar` por las pantallas reales, con el copy derivado de `FICHA-AVATAR.md` y el brand kit ya
+aprobado.

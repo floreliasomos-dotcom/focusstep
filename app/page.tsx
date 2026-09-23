@@ -1,69 +1,215 @@
-import Image from "next/image";
+'use client';
+
+// Página de ventas de FocusStep — 10 secciones canónicas de 19-PAGINA-DE-VENTAS.md
+// Copy marcado trazado a docs/copy/landing.md ← FICHA-AVATAR.md. Tokens de FICHA-ARTE.md
+// vía components/landing/tokens.css. Modelo onboarding-first (ver ESTADO.md): todo CTA
+// lleva a /onboarding, nunca a un checkout directo.
+//
+// Sección 7 (Garantía) queda OMITIDA a propósito — ver nota en docs/copy/landing.md §7:
+// no se puede publicar un plazo de garantía sin verificarlo antes contra Hotmart
+// (FICHA-MERCADO.md §4, pendiente de Sesión 6). En su lugar, Oferta y CtaFinal comunican
+// el mismo alivio ("7 días gratis, sin tarjeta, cancela cuando quieras") sin usar la
+// palabra "garantía" ni afirmar un plazo de reembolso que todavía no existe.
+
+import Image from 'next/image';
+import { Frown, ListTodo, RotateCcw, Users } from 'lucide-react';
+import { Hero } from '@/components/landing/Hero';
+import { Problema } from '@/components/landing/Problema';
+import { Agitacion } from '@/components/landing/Agitacion';
+import { Solucion } from '@/components/landing/Solucion';
+import { AppPorDentro } from '@/components/landing/AppPorDentro';
+import { Oferta } from '@/components/landing/Oferta';
+import { Faq } from '@/components/landing/Faq';
+import { CtaFinal } from '@/components/landing/CtaFinal';
+import { FooterLegal } from '@/components/landing/FooterLegal';
+import { StickyCtaMobile } from '@/components/landing/ui';
+
+const CTA_HREF = '/onboarding';
+const CTA_LABEL = 'Empezar mi primer paso gratis';
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="min-h-dvh bg-[var(--bg)] text-[var(--text-primary)] [font-family:var(--font-body)]">
+      {/* 1. HERO */}
+      <Hero
+        appName="FocusStep"
+        loginHref="/entrar"
+        h1Marked="Retoma hoy con [acento]un solo paso[/acento], sin culpa"
+        subtitleMarked="Una sola tarea al día — [b]nunca una lista que te abruma[/b]."
+        ctaLabel={CTA_LABEL}
+        ctaHref={CTA_HREF}
+        socialProof={<span>Tu prueba de 7 días no pide tarjeta</span>}
+        visualPlaceholderSugerencia="captura de la pantalla Un Solo Foco, con el hábito de hoy y el botón Completar"
+        visual={
+          <div className="flex justify-center bg-[var(--surface)] py-10">
             <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+              src="/capturas/home-un-solo-foco.png"
+              alt="Pantalla Un Solo Foco de FocusStep: el hábito de hoy, la mascota y el botón Completar"
+              width={280}
+              height={607}
+              className="h-auto w-[240px] md:w-[280px]"
+              priority
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          </div>
+        }
+      />
+
+      {/* 2. PROBLEMA */}
+      <Problema
+        titulo="¿Te suena?"
+        preguntas={[
+          { icon: RotateCcw, textoMarked: '¿Empiezas motivada y a la semana ya dejaste la app?' },
+          { icon: Frown, textoMarked: '¿Sientes que fallar un día significa que [b]todo se arruinó[/b]?' },
+          { icon: ListTodo, textoMarked: '¿Tienes tantas cosas en la lista que no sabes por dónde empezar?' },
+          { icon: Users, textoMarked: '¿Sientes que todas las demás sí pueden con todo, menos tú?' },
+        ]}
+      />
+
+      {/* 3. AGITACIÓN */}
+      <Agitacion
+        frases={[
+          'Cada vez que abandonas un sistema, [b]vuelves a fojas cero[/b] con la confianza un poco más golpeada.',
+          'Si nada cambia, en 6 meses sigues empezando de nuevo cada lunes — otra vez desde cero.',
+          'Más listas y más apps no resuelven la culpa: la [acento]causa[/acento] es que castigan tus días difíciles.',
+        ]}
+        contraste={{
+          labelHoy: 'Hoy',
+          hoy: 'Otra vez la app abandonada en la pantalla 3, y la sensación de "otra vez fallé".',
+          labelFuturo: 'En 6 meses, si nada cambia',
+          futuro: 'El mismo ciclo de empezar y abandonar — con 6 meses menos y la misma culpa.',
+        }}
+      />
+
+      {/* 4. SOLUCIÓN */}
+      <Solucion
+        tituloMarked="Un [acento]solo paso[/acento], nunca una lista"
+        mecanismo="el Método Un Solo Paso"
+        bigIdeaMarked="No te falta disciplina — te sobra [b]lista[/b]. El Método Un Solo Paso te muestra una sola cosa a la vez, y si fallas un día, no borra nada."
+        pasos={[
+          { titulo: 'Elige tu hábito', detalle: 'Máximo 3 hábitos activos — nunca una lista larga.' },
+          { titulo: 'Ves solo uno', detalle: 'Una sola tarjeta: tu único paso de hoy.' },
+          { titulo: 'Completas y sigues', detalle: 'Un mal día no borra tu progreso.' },
+        ]}
+        antesDespues={{
+          labelAntes: 'Antes',
+          antes: 'Una lista de hábitos a medio cumplir y la culpa de haber fallado.',
+          labelDespues: 'Después',
+          despues: 'Un solo paso cada día, y un "Reinicio Amigable" si faltaste unos días.',
+        }}
+      />
+
+      {/* 5. LA APP POR DENTRO */}
+      <AppPorDentro
+        tituloMarked="Tu día, [acento]un paso a la vez[/acento]"
+        frames={[
+          { src: '/capturas/home-un-solo-foco.png', label: 'Tu único paso de hoy', nombrePantalla: 'Un Solo Foco' },
+          { src: '/capturas/onboarding-meta.png', label: 'Así empiezas, en menos de 60 segundos', nombrePantalla: 'Onboarding' },
+          { src: '/capturas/reinicio-amigable.png', label: 'Vuelve sin culpa cuando faltes', nombrePantalla: 'Reinicio Amigable' },
+          { src: '/capturas/modo-dia-dificil.png', label: 'Reduce tu meta en un día difícil', nombrePantalla: 'Modo Día Difícil' },
+        ]}
+        ctaLabel={CTA_LABEL}
+        ctaHref={CTA_HREF}
+      />
+
+      {/* 6. OFERTA — anual primero, trial en ambos planes (7 días, ESTADO.md), total visible.
+          Sin lenguaje de "garantía" — ver nota de cabecera del archivo. */}
+      <Oferta
+        tituloMarked="Empieza gratis. Sigue por [acento]menos de $0.10/día[/acento]"
+        trialDias={7}
+        stack={{
+          lineas: [
+            { resultado: 'FocusStep Pro con hábitos ilimitados (12 meses)', valor: '$60' },
+            { resultado: 'Modo Día Difícil y notificaciones avanzadas', valor: '$24' },
+            { resultado: 'Frases motivacionales diarias de tu mascota', valor: '$15' },
+          ],
+          totalTachado: '$99',
+          nota: 'Hoy: $2.92/mes (se cobra $34.99/año)',
+        }}
+        anual={{
+          nombre: 'Anual',
+          badge: 'MÁS POPULAR',
+          precioMes: '$2.92',
+          totalAnual: 'Se cobra $34.99/año',
+          ahorro: '5 meses gratis',
+          descomposicionDia: 'menos de $0.10 al día',
+          ctaLabel: 'Empezar mis 7 días gratis',
+          ctaHref: CTA_HREF,
+          features: [
+            'Hábitos ilimitados (no solo 3)',
+            'Modo Día Difícil siempre disponible',
+            'Notificaciones avanzadas por bloques',
+            'Frases motivacionales de tu mascota',
+            'Cancela en 1 clic, sin preguntas',
+          ],
+        }}
+        mensual={{
+          nombre: 'Mensual',
+          precioMes: '$4.99',
+          descomposicionDia: 'menos de $0.17 al día',
+          ctaLabel: 'Elegir mensual',
+          ctaHref: CTA_HREF,
+          features: [
+            'Hábitos ilimitados (no solo 3)',
+            'Modo Día Difícil siempre disponible',
+            'Notificaciones avanzadas por bloques',
+            'Cancela en 1 clic, sin preguntas',
+          ],
+        }}
+      />
+
+      {/* 8. FAQ — objeciones literales de FICHA-AVATAR.md */}
+      <Faq
+        items={[
+          {
+            pregunta: '¿No tengo tiempo para otra app?',
+            respuestaMarked: 'Tu primer paso toma menos de 60 segundos — [b]no hay nada que configurar[/b].',
+          },
+          {
+            pregunta: 'Ya probé apps de hábitos y las abandoné',
+            respuestaMarked: 'Por eso FocusStep no usa rachas: si fallas un día, no pierdes nada — solo retomas.',
+          },
+          {
+            pregunta: '¿Esto es solo para gente con TDAH?',
+            respuestaMarked: 'No — es para cualquiera con la vida llena de pendientes. El TDAH es solo uno de los casos donde más se siente el alivio.',
+          },
+          {
+            pregunta: '¿Es caro / no lo voy a usar?',
+            respuestaMarked: 'Menos de $0.10 al día en el plan anual, y tus [b]7 días de prueba son gratis[/b] y sin tarjeta bloqueada.',
+          },
+          {
+            pregunta: '¿Es seguro poner mi tarjeta?',
+            respuestaMarked: 'El pago lo procesa Hotmart, la misma pasarela que usan miles de cursos y apps en LATAM — nunca guardamos tu tarjeta nosotros.',
+          },
+          {
+            pregunta: '¿Qué pasa si no me sirve?',
+            respuestaMarked: 'Cancelas cuando quieras desde tu cuenta, sin llamadas ni formularios.',
+          },
+        ]}
+      />
+
+      {/* 9. CTA FINAL EMOCIONAL — sin "garantía", ver nota de cabecera */}
+      <CtaFinal
+        h2Marked="Imagina tu día, [acento]un paso a la vez[/acento]"
+        futurePacingMarked="Hoy elijes un solo hábito, lo completas, y por primera vez en semanas no sientes que fallaste."
+        ctaLabel={CTA_LABEL}
+        ctaHref={CTA_HREF}
+        recap="7 días de prueba gratis · cancela cuando quieras"
+        psMarked="PS: FocusStep te da un solo hábito a la vez y un Reinicio Amigable para los días que faltes — sin rachas que castiguen. Hoy entras gratis por 7 días, sin tarjeta bloqueada."
+      />
+
+      {/* 10. FOOTER LEGAL */}
+      <FooterLegal
+        appName="FocusStep"
+        soporteEmail="soporte@focusstep.app"
+        enlaces={[
+          { label: 'Privacidad', href: '/privacidad' },
+          { label: 'Términos y Condiciones', href: '/terminos' },
+          { label: 'Reembolsos', href: '/reembolsos' },
+          { label: 'Aviso de IA', href: '/aviso-ia' },
+        ]}
+      />
+
+      <StickyCtaMobile labelComercial={CTA_LABEL} href={CTA_HREF} />
     </div>
   );
 }

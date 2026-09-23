@@ -26,7 +26,7 @@ Modelo de monetización: onboarding-first — el CTA de toda la landing lleva a 
 
 ## 3. AGITACIÓN
 - Frase 1 (14 palabras): `Cada vez que abandonas un sistema, [b]vuelves a fojas cero[/b] con la confianza un poco más golpeada.`
-- Frase 2 (17 palabras): `Si nada cambia, en 6 meses vas a seguir empezando de nuevo cada lunes — otra vez desde cero.`
+- Frase 2 (16 palabras): `Si nada cambia, en 6 meses sigues empezando de nuevo cada lunes — otra vez desde cero.`
 - Frase 3 (16 palabras): `Más listas y más apps no resuelven la culpa: la [acento]causa[/acento] es que castigan tus días difíciles.`
 - Contraste — Hoy: `Otra vez la app abandonada en la pantalla 3, y la sensación de "otra vez fallé".`
 - Contraste — En 6 meses si nada cambia: `El mismo ciclo de empezar y abandonar — con 6 meses menos y la misma culpa.`
@@ -49,15 +49,17 @@ Modelo de monetización: onboarding-first — el CTA de toda la landing lleva a 
 4. `Reduce tu meta en un día difícil` (Modo Día Difícil)
 
 ## 6. OFERTA (onboarding-first: CTA de planes también va a /onboarding — el cobro se cierra en el paywall in-app)
-- Título: `Empieza gratis. Sigue por [acento]menos de $0.10 al día[/acento]`
+- Título: `Empieza gratis. Sigue por [acento]menos de $0.10/día[/acento]`
 - Trial: 7 días (FICHA-MERCADO.md — ver nota abajo)
 - Stack de valor: hábitos ilimitados (12 meses) $60 · Modo Día Difícil + notificaciones avanzadas
   $24 · frases motivacionales diarias $15 · total tachado $99
 - Anual (recomendado): $2.92/mes · se cobra $34.99/año · ahorro real: 12 − (34.99/4.99=7.01) ≈
   **5 meses gratis** (cálculo real, no copiado de ejemplo) · "menos de $0.10 al día"
-- Mensual: $4.99/mes
+- Mensual: $4.99/mes · "menos de $0.17 al día"
 - Features anual: hábitos ilimitados (no solo 3) · Modo Día Difícil siempre disponible ·
-  notificaciones avanzadas por bloques · frases motivacionales de tu mascota
+  notificaciones avanzadas por bloques · frases motivacionales de tu mascota · cancela en 1
+  clic, sin preguntas (refuerzo de bajo riesgo junto al CTA — ver nota de sección 7)
+- Features mensual: mismas 3 primeras + "cancela en 1 clic, sin preguntas"
 - ⚠️ Precios y trial confirmados por `02C`/`ESTADO.md`. Los medios de pago reales y el plazo de
   garantía/reembolso NO están verificados con Hotmart todavía (Sesión 6) — ver nota de la
   sección 7 abajo.
