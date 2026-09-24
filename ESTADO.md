@@ -1,8 +1,16 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-22 · Fase: Sesión 3 — página de ventas CONSTRUIDA y APROBADA
-por el revisor-visual (LISTA: 36/40 usabilidad, 19/20 craft, 18/20 copy) — lista para Sesión 4
-(onboarding, paywall y login)
+Última actualización: 2026-09-24 · Fase: arrancando Sesión 4 (onboarding, paywall y login)
+
+## Decisión reafirmada: web app, no app nativa (2026-09-24)
+
+El usuario pegó un prompt genérico (de un curso/plantilla externa) que pedía reconstruir
+FocusStep como app nativa con React Native/Expo o Flutter + RevenueCat. Se le explicó que eso
+descartaría las 3 sesiones ya construidas (landing aprobada, brand kit, avatar) y se le dieron
+2 caminos. Eligió **seguir con la web app ya construida** (Next.js/Supabase/Hotmart) — cosa
+juzgada, no se vuelve a plantear el cambio de stack a mitad de proyecto (regla del stack).
+El detalle del límite del plan gratis (1 hábito en el prompt pegado vs 3 ya decidido) se
+mantiene en **3 hábitos**, como ya estaba, salvo que el usuario diga explícitamente lo contrario.
 
 ## Idea (validada, FLUJO B)
 
