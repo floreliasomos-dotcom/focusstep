@@ -202,6 +202,14 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 
 ## Problemas conocidos
 
+- [veredicto:landing] CADUCADO por la heurística de frescura: se tocaron `app/layout.tsx` (fuentes)
+  y `components/landing/tokens.css` (se agregó el token `--success`) DESPUÉS del veredicto de la
+  landing, para dar soporte al onboarding — landing en sí NO cambió de contenido ni de diseño.
+  Se re-verificará con un nuevo screenshot antes de cerrar formalmente la Sesión 4, pero no es
+  una regresión real de esa pantalla.
+- [veredicto:onboarding] y [veredicto:paywall] PENDIENTES — el revisor-visual está corriendo en
+  background para ambas (screenshots ya en `docs/revisiones/onboarding-375.png` y
+  `docs/revisiones/paywall-375.png`). Se completan y se anota el resultado apenas terminen.
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de
