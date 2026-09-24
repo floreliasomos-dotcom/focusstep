@@ -218,12 +218,12 @@ function PlanCard({
       )}
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-2 text-[16px] font-semibold">
+          {nombre}
           {seleccionado && (
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white">
               <Check size={12} strokeWidth={3} />
             </span>
           )}
-          {nombre}
         </span>
         <span className="text-[24px] font-bold tabular-nums">
           {precioMes}

@@ -92,10 +92,6 @@ export default function Onboarding() {
   }
 
   function atras() {
-    if (paso === 0) {
-      router.push('/');
-      return;
-    }
     setPaso((p) => Math.max(0, p - 1));
   }
 
@@ -113,7 +109,7 @@ export default function Onboarding() {
     <FunnelShell>
       <BarraProgreso
         pct={pct}
-        onAtras={paso < 6 ? atras : undefined}
+        onAtras={paso > 0 && paso < 6 ? atras : undefined}
         pasoActual={paso < PREGUNTAS.length ? paso + 1 : undefined}
         totalPasos={paso < PREGUNTAS.length ? PREGUNTAS.length : undefined}
       />
@@ -127,6 +123,7 @@ export default function Onboarding() {
               otraCosa={otraCosa}
               onOtraCosa={setOtraCosa}
               onElegir={(v) => elegir(PREGUNTAS[paso].id, v)}
+              esUltima={paso === PREGUNTAS.length - 1}
             />
           </PasoTransicion>
         )}
@@ -167,12 +164,14 @@ function PantallaPregunta({
   otraCosa,
   onOtraCosa,
   onElegir,
+  esUltima,
 }: {
   pregunta: (typeof PREGUNTAS)[number];
   seleccionado?: string;
   otraCosa: string;
   onOtraCosa: (v: string) => void;
   onElegir: (v: string) => void;
+  esUltima: boolean;
 }) {
   const [mostrarInput, setMostrarInput] = useState(false);
 
@@ -207,6 +206,9 @@ function PantallaPregunta({
             placeholder="Cuéntame con tus palabras"
             className="h-14 w-full rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)] bg-[var(--surface)] px-4 text-[16px] outline-none focus:border-[var(--accent)]"
           />
+          {!otraCosa.trim() && (
+            <p className="text-[12px] text-[var(--text-secondary)]">Escribe algo para poder continuar.</p>
+          )}
           <BotonPrimario disabled={!otraCosa.trim()} onClick={() => onElegir(otraCosa.trim())}>
             Continuar
           </BotonPrimario>
@@ -215,7 +217,9 @@ function PantallaPregunta({
       <div className="flex-1" aria-hidden="true" />
       <div className="flex h-40 shrink-0 flex-col items-center justify-center gap-2 opacity-90">
         <Mascota size={64} />
-        <p className="text-[12px] font-medium text-[var(--text-secondary)]">Ya casi terminas</p>
+        <p className="text-[12px] font-medium text-[var(--text-secondary)]">
+          {esUltima ? 'Ya casi terminas' : 'Te acompaño en esto'}
+        </p>
       </div>
     </div>
   );
