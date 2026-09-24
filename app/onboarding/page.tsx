@@ -212,6 +212,7 @@ function PantallaPregunta({
           </BotonPrimario>
         </div>
       )}
+      <div className="flex-1" aria-hidden="true" />
       <div className="flex h-40 shrink-0 flex-col items-center justify-center gap-2 opacity-90">
         <Mascota size={64} />
         <p className="text-[12px] font-medium text-[var(--text-secondary)]">Ya casi terminas</p>

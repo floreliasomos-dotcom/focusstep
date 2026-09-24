@@ -167,7 +167,7 @@ export function BotonPrimario({
 }) {
   const reduce = useReducedMotion();
   const clases =
-    'flex h-14 w-full items-center justify-center rounded-[var(--radius-btn)] bg-[var(--accent)] text-[16px] font-bold text-white shadow-[0_10px_24px_-8px_color-mix(in_oklab,var(--accent)_45%,transparent)] disabled:opacity-50';
+    'flex h-14 w-full items-center justify-center rounded-[var(--radius-button)] bg-[var(--accent)] text-[16px] font-bold text-white shadow-[0_10px_24px_-8px_color-mix(in_oklab,var(--accent)_45%,transparent)] disabled:opacity-50';
   if (href && !disabled) {
     return (
       <a href={href} className={clases}>

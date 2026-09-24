@@ -137,9 +137,14 @@ export default function Paywall() {
             Hoy no pagas nada · te avisamos antes del cobro · cancela cuando quieras
           </p>
           <div className="mt-3 flex items-center justify-center gap-4 text-[12px] font-medium text-[var(--text-secondary)]">
-            <button type="button" onClick={ahoraNo} className="underline">
+            <motion.button
+              type="button"
+              onClick={ahoraNo}
+              whileTap={reduce ? undefined : { scale: 0.95 }}
+              className="underline"
+            >
               Ahora no
-            </button>
+            </motion.button>
           </div>
           <p className="mt-4 text-center text-[12px] text-[var(--text-tertiary)]">
             Pago seguro procesado por Hotmart
@@ -212,7 +217,14 @@ function PlanCard({
         </span>
       )}
       <div className="flex items-center justify-between">
-        <span className="text-[16px] font-semibold">{nombre}</span>
+        <span className="flex items-center gap-2 text-[16px] font-semibold">
+          {seleccionado && (
+            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white">
+              <Check size={12} strokeWidth={3} />
+            </span>
+          )}
+          {nombre}
+        </span>
         <span className="text-[24px] font-bold tabular-nums">
           {precioMes}
           <span className="text-[12px] font-semibold text-[var(--text-secondary)]">/mes</span>
