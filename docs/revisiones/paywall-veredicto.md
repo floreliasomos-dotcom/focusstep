@@ -1,19 +1,16 @@
 # VEREDICTO revisor-visual — paywall
 Fecha: 2026-09-24 00:00
 Screenshot: docs/revisiones/paywall-375.png
-Usabilidad: 31/40
+Usabilidad: 32/40
 Craft: 18/20
 Copy (si vende): 17/20
 Fidelidad (si hubo referencia): N-A
 Veredicto: NO LISTA
 Top defectos:
-1. [Selector de plan Anual/Mensual] El check de selección ahora replica el patrón de `Chip`, pero se ubica a la IZQUIERDA del nombre del plan mientras que en `Chip` (usado en el resto del funnel) va a la DERECHA del texto → homologar la posición (derecha) para que la consistencia sea exacta, no solo "cercana" (heurística 4 sube de 2 a 3, pero no llega a 4).
-2. [CTA "Empezar mis 7 días gratis"] Al tocar, `continuar()` llama `router.push` sin ningún estado de "procesando" — si la navegación real tarda, el usuario no sabe si el tap registró → agregar spinner o texto de carga breve mientras resuelve la navegación.
-3. [Bloque de pago] Estado de error de pago sigue sin implementar (pendiente Sesión 6/Hotmart) — confirmado, sin cambios desde la pasada anterior, sigue bajando heurística 9 (errores claros con solución).
-4. [Footer, bajo "Pago seguro procesado por Hotmart"] Garantía sin nombre ni plazo, pendiente Sesión 6 — confirmado, sigue bajando el sub-check binario "Garantía nombrada" de la rúbrica de conversión.
-5. [X arriba / "Ahora no"] Ambas salidas llevan al mismo destino (plan gratis) sin posibilidad de volver a revisar o editar las respuestas del onboarding ya dadas — control y libertad se queda en 3/4; si el negocio lo permite, agregar un enlace discreto "Editar mis respuestas".
+1. [CTA "Empezar mis 7 días gratis"] `continuar()` (línea 52-55 de app/paywall/page.tsx) llama `router.push` sin ningún estado de "procesando" — si la navegación real tarda >100ms el usuario no sabe si el tap registró → agregar un estado local `enviando` que muestre spinner/texto de carga en `BotonPrimario` mientras resuelve. Esto SÍ es accionable ahora, sin backend.
+2. [Bloque de pago] Estado de error de pago sigue sin implementar — confirmado, sin cambios desde la pasada anterior. Pendiente real de Sesión 6 (no hay endpoint de Hotmart que pueda fallar todavía); el mock actual no tiene ninguna ruta de error que mostrar. Sin backend no hay error real que diseñar, pero mientras no exista, la heurística 9 se queda tope en 2/4.
+3. [Footer, bajo "Pago seguro procesado por Hotmart"] Garantía sin nombre ni plazo — confirmado, documentado en el código (líneas 6-8) como pendiente de verificar el plazo real con Hotmart en Sesión 6. Sigue bajando el sub-check binario "Garantía nombrada" de la rúbrica de conversión.
+4. [X arriba / "Ahora no"] Ambas salidas llevan al mismo destino (plan gratis) sin posibilidad de volver a revisar o editar las respuestas del onboarding ya dadas — control y libertad se queda en 3/4. Es una decisión de producto (¿se permite reabrir el onboarding sin perder el paywall generado?), no un bug de esta sesión; si el negocio lo permite, un enlace discreto "Editar mis respuestas" sube esta heurística a 4/4 sin tocar backend.
+5. [Selector de plan Anual/Mensual] RESUELTO esta pasada: el checkmark ahora aparece después del nombre del plan (mismo orden que `Chip`: label → check), confirmado en código (línea 219-227) y en el screenshot. Sube heurística 4 (consistencia) de 3 a 4/4. Ya no es un defecto — se deja registrado como el cambio verificado, no como pendiente.
 
-Cambios verificados esta pasada (los 3 declarados por la sesión, confirmados en código + screenshot):
-- CTA "Empezar mis 7 días gratis" ahora se ve en pill/cápsula real (bug de `--radius-btn` corregido) — sube el eje de encaje óptico de craft.
-- "Ahora no" (línea 140-147 de app/paywall/page.tsx) ahora es `motion.button` con `whileTap={{scale:0.95}}` — feedback táctil parejo en toda la pantalla.
-- `PlanCard` (línea 219-227 de app/paywall/page.tsx) muestra un checkmark circular junto al nombre del plan seleccionado, mismo estilo visual que `Chip` — mejora la consistencia aunque la posición (izquierda vs derecha) todavía difiere (ver defecto 1).
+Techo real de esta pantalla sin tocar backend: con el fix del punto 1 (loading state del CTA) y una decisión de producto sobre el punto 4, el máximo alcanzable ronda 34/40 — los puntos 2 y 3 dependen estructuralmente de Hotmart (Sesión 6) y mantienen un tope duro por debajo del umbral de 36/40 hasta entonces. Craft (18/20) y copy (17/20) ya están dentro de rango aceptable y no son el cuello de botella; el gate que falla es exclusivamente usabilidad, y es un gate de backend, no de diseño.

@@ -33,6 +33,7 @@ export default function Paywall() {
   const [plan, setPlan] = useState<'anual' | 'mensual'>('anual');
   const [respuestasN, setRespuestasN] = useState(0);
   const [momento, setMomento] = useState<string | undefined>();
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     try {
@@ -50,6 +51,7 @@ export default function Paywall() {
   const metaLabel = (momento && MOMENTO_LABEL[momento]) || 'tu día a día';
 
   function continuar() {
+    setEnviando(true);
     sessionStorage.setItem('focusstep_plan_elegido', plan);
     router.push('/entrar?origen=paywall');
   }
@@ -132,7 +134,9 @@ export default function Paywall() {
         </Bloque>
 
         <Bloque className="mt-6">
-          <BotonPrimario onClick={continuar}>Empezar mis 7 días gratis</BotonPrimario>
+          <BotonPrimario onClick={continuar} disabled={enviando}>
+            {enviando ? 'Un momento…' : 'Empezar mis 7 días gratis'}
+          </BotonPrimario>
           <p className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
             Hoy no pagas nada · te avisamos antes del cobro · cancela cuando quieras
           </p>

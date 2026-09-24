@@ -301,21 +301,18 @@ function PantallaPrimeraVictoria({
         )}
       </motion.button>
 
-      {completa && (
-        <motion.p
+      {completa ? (
+        <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="font-semibold text-[var(--accent)]"
+          className="flex w-full flex-col items-center gap-4 pt-2"
         >
-          Así de simple es un día con FocusStep
-        </motion.p>
+          <p className="font-semibold text-[var(--accent)]">Así de simple es un día con FocusStep</p>
+          <BotonPrimario onClick={onContinuar}>Continuar</BotonPrimario>
+        </motion.div>
+      ) : (
+        <div className="h-14 w-full pt-4" aria-hidden="true" />
       )}
-
-      <div className="w-full pt-4">
-        <BotonPrimario disabled={!completa} onClick={onContinuar}>
-          Continuar
-        </BotonPrimario>
-      </div>
     </div>
   );
 }
