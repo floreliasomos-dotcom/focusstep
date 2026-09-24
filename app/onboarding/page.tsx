@@ -9,8 +9,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
-import { RotateCcw, Frown, ListTodo, Clock3, Sunrise, Briefcase, Moon, CircleHelp } from 'lucide-react';
-import { BarraProgreso, BotonPrimario, Chip, FunnelShell, PasoTransicion } from '@/components/funnel/ui';
+import { RotateCcw, Frown, ListTodo, Clock3, Sunrise, Briefcase, Moon } from 'lucide-react';
+import { BarraProgreso, BotonPrimario, Chip, FunnelShell, Mascota, PasoTransicion } from '@/components/funnel/ui';
 
 const PREGUNTAS = [
   {
@@ -93,7 +93,12 @@ export default function Onboarding() {
 
   return (
     <FunnelShell>
-      <BarraProgreso pct={pct} onAtras={paso > 0 && paso < 6 ? atras : undefined} />
+      <BarraProgreso
+        pct={pct}
+        onAtras={paso > 0 && paso < 6 ? atras : undefined}
+        pasoActual={paso < PREGUNTAS.length ? paso + 1 : undefined}
+        totalPasos={paso < PREGUNTAS.length ? PREGUNTAS.length : undefined}
+      />
 
       <AnimatePresence mode="wait">
         {paso < PREGUNTAS.length && (
@@ -185,6 +190,9 @@ function PantallaPregunta({
           </BotonPrimario>
         </div>
       )}
+      <div className="mt-auto flex justify-center pt-8 opacity-90">
+        <Mascota size={56} />
+      </div>
     </div>
   );
 }
@@ -198,12 +206,7 @@ function PantallaReconocimiento({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 py-10 text-center">
-      <span
-        className="flex size-16 items-center justify-center rounded-full"
-        style={{ background: 'color-mix(in oklab, var(--accent) 14%, transparent)' }}
-      >
-        <CircleHelp size={32} color="var(--accent)" strokeWidth={1.6} />
-      </span>
+      <Mascota size={72} />
       <h2 className="text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">
         Tus respuestas te describen
       </h2>
@@ -236,6 +239,7 @@ function PantallaPrimeraVictoria({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 py-8 text-center">
+      <Mascota size={56} contenta={completa} />
       <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--accent)]">
         Tu primer paso — menos de 60 segundos
       </p>

@@ -9,14 +9,16 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { X, Check } from 'lucide-react';
-import { BotonPrimario, FunnelShell } from '@/components/funnel/ui';
+import { BotonPrimario, FunnelShell, Mascota } from '@/components/funnel/ui';
 
+// Copy trazado a FICHA-AVATAR.md: cada feature ancla al dolor/deseo que resuelve,
+// no una lista de funciones genérica (defecto real de revisor-visual, ver docs/revisiones).
 const FEATURES = [
-  'Hábitos ilimitados (no solo 3)',
-  'Modo Día Difícil siempre disponible',
-  'Frases motivacionales de tu mascota',
+  'Hábitos ilimitados — sin límite de 3 cuando ya no sientas que te abruma',
+  'Modo Día Difícil — para cuando un mal día no sea el final',
+  'Frases de tu mascota que te acompañan, sin presión',
 ];
 
 const MOMENTO_LABEL: Record<string, string> = {
@@ -27,6 +29,7 @@ const MOMENTO_LABEL: Record<string, string> = {
 
 export default function Paywall() {
   const router = useRouter();
+  const reduce = useReducedMotion();
   const [plan, setPlan] = useState<'anual' | 'mensual'>('anual');
   const [respuestasN, setRespuestasN] = useState(0);
   const [momento, setMomento] = useState<string | undefined>();
@@ -72,11 +75,12 @@ export default function Paywall() {
       <motion.div
         initial="oculto"
         animate="visible"
-        variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+        variants={{ visible: { transition: { staggerChildren: reduce ? 0 : 0.07 } } }}
         className="flex flex-1 flex-col"
       >
         <Bloque>
-          <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
+          <Mascota size={48} />
+          <h1 className="mt-3 text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
             Tu plan para <span className="text-[var(--accent)]">{metaLabel}</span> está listo
           </h1>
           <p className="mt-2 text-[16px] text-[var(--text-secondary)]">
@@ -139,8 +143,12 @@ export default function Paywall() {
 }
 
 function Bloque({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const reduce = useReducedMotion();
   return (
-    <motion.div variants={{ oculto: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }} className={className}>
+    <motion.div
+      variants={{ oculto: { opacity: 0, y: reduce ? 0 : 16 }, visible: { opacity: 1, y: 0 } }}
+      className={className}
+    >
       {children}
     </motion.div>
   );

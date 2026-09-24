@@ -202,14 +202,19 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 
 ## Problemas conocidos
 
-- [veredicto:landing] CADUCADO por la heurística de frescura: se tocaron `app/layout.tsx` (fuentes)
-  y `components/landing/tokens.css` (se agregó el token `--success`) DESPUÉS del veredicto de la
-  landing, para dar soporte al onboarding — landing en sí NO cambió de contenido ni de diseño.
-  Se re-verificará con un nuevo screenshot antes de cerrar formalmente la Sesión 4, pero no es
-  una regresión real de esa pantalla.
-- [veredicto:onboarding] y [veredicto:paywall] PENDIENTES — el revisor-visual está corriendo en
-  background para ambas (screenshots ya en `docs/revisiones/onboarding-375.png` y
-  `docs/revisiones/paywall-375.png`). Se completan y se anota el resultado apenas terminen.
+- [veredicto:landing] re-verificado el 2026-09-24: se re-tomó `landing-375.png` desde un build
+  de producción limpio tras tocar `app/layout.tsx`/`tokens.css` para el onboarding — landing se
+  ve idéntica, veredicto LISTA (36/40, 19/20, 18/20) confirmado vigente en `landing-veredicto.md`.
+- Primera pasada del revisor-visual en onboarding y paywall: NO LISTA (onboarding 30/40 usab.,
+  9/20 craft · paywall 31/40 usab., 12/20 craft, 13/20 copy). Defectos corregidos: se agregó
+  `useReducedMotion()` a todas las animaciones de `components/funnel/ui.tsx` (antes sin guard
+  de accesibilidad), se agregó la mascota blob (dispositivo ownable de FICHA-ARTE.md, antes
+  ausente del funnel) a las pantallas de pregunta/reconocimiento/primera-victoria/paywall, se
+  agregó el contador "Pregunta N de 4", se le dio profundidad al fondo (mesh sutil en
+  `FunnelShell`), y se reescribió el copy de las features del paywall con el lenguaje literal
+  de FICHA-AVATAR.md. Screenshots regenerados desde build de producción (el "círculo negro con
+  N" que vio el revisor era el botón de devtools de Next.js, no parte de la UI). [veredicto:
+  onboarding] y [veredicto:paywall] — segunda pasada del revisor-visual EN CURSO (background).
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de

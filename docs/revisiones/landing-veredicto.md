@@ -17,3 +17,11 @@ Defecto #2 corregido: se agregó `descomposicionDia: 'menos de $0.17 al día'` a
 app/page.tsx — ahora ambos planes (Anual y Mensual) muestran la descomposición diaria, verificado
 con captura del navegador. Cambio de copy puro, sin alterar composición/tokens — no requiere
 nueva pasada del revisor (mismo veredicto LISTA se mantiene vigente).
+
+## Re-verificación de frescura (2026-09-24)
+Se tocaron `app/layout.tsx` (atributo data-scroll-behavior, fuentes sin cambio) y
+`components/landing/tokens.css` (se agregó el token `--success` para el onboarding) DESPUÉS de
+este veredicto. Ninguno de los dos cambia el contenido ni el diseño de la landing — se
+re-tomó `docs/revisiones/landing-375.png` desde un build de producción limpio (`next build` +
+`next start`) y se confirmó visualmente que la landing se ve idéntica al veredicto original.
+Veredicto LISTA (36/40, 19/20, 18/20) se mantiene vigente.
