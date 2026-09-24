@@ -129,7 +129,7 @@ export function Chip({
     >
       {Icon && (
         <span
-          className="flex size-9 shrink-0 items-center justify-center rounded-[12px]"
+          className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-button)]"
           style={{ background: 'color-mix(in oklab, var(--accent) 12%, transparent)' }}
         >
           <Icon size={18} color="var(--accent)" />

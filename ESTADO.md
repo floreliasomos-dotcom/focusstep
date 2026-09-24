@@ -206,12 +206,15 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
   `components/funnel/ui.tsx` y las páginas de onboarding/paywall, que NO son la landing).
   Última verificación confirmada: LISTA (36/40, 19/20, 18/20) — sin cambios reales en `/`.
   Se re-tocará el veredicto (mismo patrón que antes) en el próximo checkpoint de cierre.
-- [veredicto:onboarding] y [veredicto:paywall] — iteración en curso con el revisor-visual
-  independiente (rondas 1 y 2 ya corregidas: reduced-motion, mascota, contador de preguntas,
-  stagger de chips, iconos consistentes, teclado 1-4, hairlines, superficie hundida del
-  timeline, feedback de tap en planes, monto exacto del cobro destacado). Tercera pasada
-  EN CURSO (background) al momento de este commit — todavía NO LISTA en el archivo de
-  veredicto vigente. No se declaran estas pantallas "terminadas" hasta que digan LISTA.
+- [veredicto:onboarding] y [veredicto:paywall] — cuarta iteración con el revisor-visual
+  independiente EN CURSO (background). Rondas previas corregidas: reduced-motion, mascota,
+  contador de preguntas, stagger de chips, iconos consistentes, hairlines, superficie hundida
+  del timeline, feedback de tap en planes/X, monto exacto del cobro destacado, radio del ícono
+  con token correcto, salida visible desde el paso 1. BUG REAL corregido en la ronda 3: el
+  atajo de teclado 1-4 (agregado en la ronda 2) interceptaba los dígitos escritos en el campo
+  libre "Otra cosa" y seleccionaba una opción por error — se eliminó por completo en vez de
+  parchearlo, ya que no aportaba valor descubrible. Todavía NO LISTA en el archivo de veredicto
+  vigente. No se declaran estas pantallas "terminadas" hasta que digan LISTA.
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de

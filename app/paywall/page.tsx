@@ -62,14 +62,15 @@ export default function Paywall() {
   return (
     <FunnelShell>
       <div className="flex items-center justify-between py-2">
-        <button
+        <motion.button
           type="button"
           onClick={ahoraNo}
           aria-label="Cerrar y seguir con el plan gratis"
+          whileTap={reduce ? undefined : { scale: 0.9 }}
           className="flex size-11 items-center justify-center rounded-full text-[var(--text-secondary)]"
         >
           <X size={20} />
-        </button>
+        </motion.button>
       </div>
 
       <motion.div

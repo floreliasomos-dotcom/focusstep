@@ -92,6 +92,10 @@ export default function Onboarding() {
   }
 
   function atras() {
+    if (paso === 0) {
+      router.push('/');
+      return;
+    }
     setPaso((p) => Math.max(0, p - 1));
   }
 
@@ -109,7 +113,7 @@ export default function Onboarding() {
     <FunnelShell>
       <BarraProgreso
         pct={pct}
-        onAtras={paso > 0 && paso < 6 ? atras : undefined}
+        onAtras={paso < 6 ? atras : undefined}
         pasoActual={paso < PREGUNTAS.length ? paso + 1 : undefined}
         totalPasos={paso < PREGUNTAS.length ? PREGUNTAS.length : undefined}
       />
@@ -178,13 +182,7 @@ function PantallaPregunta({
   }
 
   return (
-    <div
-      className="flex flex-1 flex-col pt-6"
-      onKeyDown={(e) => {
-        const n = Number(e.key);
-        if (n >= 1 && n <= pregunta.opciones.length) elegirOpcion(pregunta.opciones[n - 1]);
-      }}
-    >
+    <div className="flex flex-1 flex-col pt-6">
       <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
         {pregunta.pregunta}
       </h1>
@@ -214,7 +212,7 @@ function PantallaPregunta({
           </BotonPrimario>
         </div>
       )}
-      <div className="mt-8 flex flex-1 flex-col items-center justify-center gap-2 opacity-90">
+      <div className="flex h-40 shrink-0 flex-col items-center justify-center gap-2 opacity-90">
         <Mascota size={64} />
         <p className="text-[12px] font-medium text-[var(--text-secondary)]">Ya casi terminas</p>
       </div>
