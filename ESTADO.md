@@ -190,6 +190,9 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
   "cancela en 1 clic, sin preguntas" en vez de una promesa de reembolso inventada; (b) sumar
   prueba social real (testimonio/cifra) una vez existan usuarios — día 1 no se inventa un
   número; (c) animación de conteo (count-up) en los precios de Oferta — mejora menor de pulido.
+- Auditoría de escaneabilidad mobile (375px, sección por sección) pasada el 2026-09-24: cero
+  bloques de texto >4 líneas, íconos en Problema/Solución/Oferta, prueba del "solo-titulares"
+  superada, FAQ en acordeón, pricing/oferta en tarjetas. Detalle en el resumen de esta sesión.
 
 ## Próximo paso
 
