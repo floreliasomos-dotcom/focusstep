@@ -88,7 +88,14 @@ export default function Paywall() {
           </p>
         </Bloque>
 
-        <Bloque className="mt-6 rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--accent)_20%,transparent)] bg-[var(--surface)] p-4">
+        <Bloque
+          className="mt-6 rounded-[var(--radius-card)] border border-transparent p-4"
+          style={{
+            background:
+              'linear-gradient(var(--surface), var(--surface)) padding-box, ' +
+              'linear-gradient(135deg, color-mix(in oklab, var(--accent) 40%, transparent), transparent 60%) border-box',
+          }}
+        >
           <ul className="flex flex-col gap-3">
             {FEATURES.map((f) => (
               <li key={f} className="flex items-center gap-3 text-[16px] font-medium">
@@ -101,7 +108,7 @@ export default function Paywall() {
           </ul>
         </Bloque>
 
-        <Bloque className="mt-6">
+        <Bloque className="mt-6 rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4">
           <Timeline />
         </Bloque>
 
@@ -142,12 +149,21 @@ export default function Paywall() {
   );
 }
 
-function Bloque({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Bloque({
+  children,
+  className = '',
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const reduce = useReducedMotion();
   return (
     <motion.div
       variants={{ oculto: { opacity: 0, y: reduce ? 0 : 16 }, visible: { opacity: 1, y: 0 } }}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>
@@ -169,15 +185,25 @@ function PlanCard({
   seleccionado: boolean;
   onClick: () => void;
 }) {
+  const reduce = useReducedMotion();
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onClick}
-      className={`relative w-full rounded-[var(--radius-card)] border-2 p-4 text-left transition-colors ${
+      whileTap={reduce ? undefined : { scale: 0.98 }}
+      className="relative w-full rounded-[var(--radius-card)] border-2 border-transparent p-4 text-left"
+      style={
         seleccionado
-          ? 'border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_6%,transparent)]'
-          : 'border-[color-mix(in_oklab,var(--text-secondary)_20%,transparent)] bg-[var(--surface)]'
-      }`}
+          ? {
+              background:
+                'linear-gradient(color-mix(in oklab, var(--accent) 6%, var(--surface)), color-mix(in oklab, var(--accent) 6%, var(--surface))) padding-box, ' +
+                'linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent) 30%, transparent)) border-box',
+            }
+          : {
+              background: 'var(--surface)',
+              borderColor: 'color-mix(in oklab, var(--text-secondary) 20%, transparent)',
+            }
+      }
     >
       {badge && (
         <span className="absolute -top-3 left-4 rounded-full bg-[var(--accent)] px-3 py-1 text-[12px] font-bold uppercase tracking-wide text-white">
@@ -192,15 +218,15 @@ function PlanCard({
         </span>
       </div>
       {totalAnual && <p className="mt-1 text-[12px] text-[var(--accent)]">{totalAnual}</p>}
-    </button>
+    </motion.button>
   );
 }
 
 function Timeline() {
   const nodos = [
-    { titulo: 'Hoy — acceso completo', sub: 'Todo tu plan, sin límites', activo: true },
-    { titulo: 'Día 5 — te avisamos', sub: 'Correo antes de cualquier cobro', activo: true },
-    { titulo: 'Día 7 — primer cobro', sub: 'Cancela antes sin costo', activo: false },
+    { titulo: 'Hoy — acceso completo', sub: 'Todo tu plan, sin límites', activo: true, clave: false },
+    { titulo: 'Día 5 — te avisamos', sub: 'Correo antes de cualquier cobro', activo: true, clave: false },
+    { titulo: 'Día 7 — primer cobro: $34.99/año', sub: 'Cancela antes sin costo', activo: false, clave: true },
   ];
   return (
     <div className="flex flex-col gap-1">
@@ -215,7 +241,7 @@ function Timeline() {
             {i < nodos.length - 1 && <span className="w-px flex-1 bg-[color-mix(in_oklab,var(--accent)_30%,transparent)]" />}
           </div>
           <div className="pb-4">
-            <p className="text-[16px] font-semibold">{n.titulo}</p>
+            <p className={`text-[16px] font-semibold ${n.clave ? 'text-[var(--accent)]' : ''}`}>{n.titulo}</p>
             <p className="text-[12px] text-[var(--text-secondary)]">{n.sub}</p>
           </div>
         </div>

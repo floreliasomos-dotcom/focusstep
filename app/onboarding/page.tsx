@@ -9,7 +9,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
-import { RotateCcw, Frown, ListTodo, Clock3, Sunrise, Briefcase, Moon } from 'lucide-react';
+import {
+  RotateCcw,
+  Frown,
+  ListTodo,
+  Clock3,
+  Sunrise,
+  Briefcase,
+  Moon,
+  TrendingUp,
+  PauseCircle,
+  Snowflake,
+  XCircle,
+  Puzzle,
+  BellOff,
+} from 'lucide-react';
 import { BarraProgreso, BotonPrimario, Chip, FunnelShell, Mascota, PasoTransicion } from '@/components/funnel/ui';
 
 const PREGUNTAS = [
@@ -27,18 +41,18 @@ const PREGUNTAS = [
     id: 'paralisis',
     pregunta: '¿Qué tanto te paraliza ver una lista larga de pendientes?',
     opciones: [
-      { label: 'Un poco, pero avanzo' },
-      { label: 'Bastante — me cuesta arrancar' },
-      { label: 'Mucho, se me congela la cabeza' },
+      { label: 'Un poco, pero avanzo', icon: TrendingUp },
+      { label: 'Bastante — me cuesta arrancar', icon: PauseCircle },
+      { label: 'Mucho, se me congela la cabeza', icon: Snowflake },
     ],
   },
   {
     id: 'fracasos',
     pregunta: '¿Qué te ha hecho dejar otras apps de hábitos?',
     opciones: [
-      { label: 'Las rachas rotas me hacían sentir mal' },
-      { label: 'Eran complicadas de usar' },
-      { label: 'Se me olvidaba entrar' },
+      { label: 'Las rachas rotas me hacían sentir mal', icon: XCircle },
+      { label: 'Eran complicadas de usar', icon: Puzzle },
+      { label: 'Se me olvidaba entrar', icon: BellOff },
       { label: 'Otra cosa (escribe la tuya)', escape: true },
     ],
   },
@@ -157,22 +171,32 @@ function PantallaPregunta({
   onElegir: (v: string) => void;
 }) {
   const [mostrarInput, setMostrarInput] = useState(false);
+
+  function elegirOpcion(op: (typeof pregunta.opciones)[number]) {
+    if ('escape' in op && op.escape) setMostrarInput(true);
+    else onElegir(op.label);
+  }
+
   return (
-    <div className="flex flex-1 flex-col pt-6">
+    <div
+      className="flex flex-1 flex-col pt-6"
+      onKeyDown={(e) => {
+        const n = Number(e.key);
+        if (n >= 1 && n <= pregunta.opciones.length) elegirOpcion(pregunta.opciones[n - 1]);
+      }}
+    >
       <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
         {pregunta.pregunta}
       </h1>
       <div className="mt-8 flex flex-col gap-3">
-        {pregunta.opciones.map((op) => (
+        {pregunta.opciones.map((op, i) => (
           <Chip
             key={op.label}
             label={op.label}
             icon={'icon' in op ? op.icon : undefined}
             seleccionado={seleccionado === op.label}
-            onClick={() => {
-              if ('escape' in op && op.escape) setMostrarInput(true);
-              else onElegir(op.label);
-            }}
+            indice={i}
+            onClick={() => elegirOpcion(op)}
           />
         ))}
       </div>
@@ -190,8 +214,9 @@ function PantallaPregunta({
           </BotonPrimario>
         </div>
       )}
-      <div className="mt-auto flex justify-center pt-8 opacity-90">
-        <Mascota size={56} />
+      <div className="mt-8 flex flex-1 flex-col items-center justify-center gap-2 opacity-90">
+        <Mascota size={64} />
+        <p className="text-[12px] font-medium text-[var(--text-secondary)]">Ya casi terminas</p>
       </div>
     </div>
   );

@@ -45,8 +45,8 @@ export function FunnelShell({ children }: { children: ReactNode }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            'radial-gradient(720px 420px at 50% -8%, color-mix(in oklab, var(--accent) 9%, transparent) 0%, transparent 60%), ' +
-            'radial-gradient(560px 360px at 100% 100%, color-mix(in oklab, var(--accent-2) 8%, transparent) 0%, transparent 55%)',
+            'radial-gradient(720px 460px at 50% -10%, color-mix(in oklab, var(--accent) 16%, transparent) 0%, transparent 62%), ' +
+            'radial-gradient(600px 420px at 100% 105%, color-mix(in oklab, var(--accent-2) 14%, transparent) 0%, transparent 58%)',
         }}
       />
       {children}
@@ -104,17 +104,22 @@ export function Chip({
   seleccionado,
   onClick,
   icon: Icon,
+  indice = 0,
 }: {
   label: string;
   seleccionado?: boolean;
   onClick: () => void;
   icon?: LucideIcon;
+  indice?: number;
 }) {
   const reduce = useReducedMotion();
   return (
     <motion.button
       type="button"
       onClick={onClick}
+      initial={{ opacity: 0, y: reduce ? 0 : 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0.1 : 0.25, delay: reduce ? 0 : indice * 0.07 }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
       className={`flex min-h-14 w-full items-center gap-3 rounded-[var(--radius-card)] border px-4 py-3 text-left text-[16px] font-medium transition-colors ${
         seleccionado

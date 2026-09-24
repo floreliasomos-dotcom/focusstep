@@ -1,14 +1,16 @@
 # VEREDICTO revisor-visual — onboarding
 Fecha: 2026-09-24 00:00
 Screenshot: docs/revisiones/onboarding-375.png
-Usabilidad: 30/40
-Craft: 9/20
+Usabilidad: 29/40
+Craft: 14/20
 Copy (si vende): N-A
 Fidelidad (si hubo referencia): N-A
 Veredicto: NO LISTA
 Top defectos:
-1. [código: app/onboarding/page.tsx + components/funnel/ui.tsx] Ninguna animación del funnel (chips, PasoTransicion, BarraProgreso, celebración de la Primera Victoria) usa useReducedMotion — cero manejo de prefers-reduced-motion en todo el onboarding → importar useReducedMotion de motion/react y anular x/scale/springs conservando el fade, igual que ya hace components/landing/ui.tsx.
-2. [pantalla de pregunta, mitad inferior] Con 4 chips el ~45-50% inferior del viewport (375x812) queda completamente vacío sin ilustración ni relleno → agregar la mascota blob (dispositivo ownable) u otro elemento de apoyo bajo los chips para eliminar el vacío muerto.
-3. [identidad, todo el onboarding] La mascota "blob" declarada en FICHA-ARTE.md como dispositivo ownable NO aparece en ningún punto del código: reconocimiento usa el ícono genérico CircleHelp de Lucide y primera-victoria usa un círculo liso sin personaje → implementar el blob al menos en reconocimiento y primera-victoria, el kit visual es intercambiable con cualquier otra app sin él.
-4. [BarraProgreso, arriba de la pantalla] Solo se ve una barra sin texto — no dice "Pregunta 1 de 4" ni cuántas faltan → agregar label textual de progreso para que el usuario reconozca en vez de memorizar/adivinar cuánto falta.
-5. [components/funnel/ui.tsx, Chip] Cero atajos de teclado más allá del focus nativo del botón — sin selección numérica (1-4) para el usuario que prefiere teclado, sin listeners adicionales en el código → agregar navegación por número como mejora de eficiencia para el usuario experto.
+1. [pantalla pregunta, mitad inferior] Persiste un vacío de ~180-200px entre el último chip y la mascota (chips terminan ~y=517, mascota empieza ~y=707 en 812px de alto) — la mascota ayuda pero no cierra el hueco, un usuario lo nota sin buscarlo → reducir el espacio (menos mt-auto/pt-8) o agrandar la mascota/agregar un micro-texto de apoyo bajo ella.
+2. [components/funnel/ui.tsx, lista de Chips en PantallaPregunta] Los 4 chips aparecen todos a la vez sin stagger de entrada — la baseline de animación #1 (entrada escalonada 50-80ms) sigue sin cumplirse en la primera pantalla del funnel → envolver el contenedor de chips en un variants de Motion con staggerChildren ~60-80ms.
+3. [app/onboarding/page.tsx, array PREGUNTAS] Inconsistencia real de componente: las preguntas 1 y 4 dan `icon` a sus opciones (chip con contenedor de ícono) y las preguntas 2 y 3 no — el mismo Chip luce distinto entre pasos consecutivos, rompe consistencia (h4) → dar ícono a todas las opciones o quitarlo de todas.
+4. [components/funnel/ui.tsx, Chip] Sin atajo de teclado (selección por número 1-4) para el usuario que prefiere teclado — sigue sin implementarse desde la pasada anterior → agregar onKeyDown en el contenedor de PantallaPregunta que mapee dígitos a `onElegir`.
+5. [BarraProgreso, header] El botón Atrás (ChevronLeft) ya funciona y tiene aria-label, pero no hay forma visible de salir del onboarding por completo (cerrar/volver a landing) desde el paso 0 — verificar en código que `atras()` en paso 0 tiene destino definido, o agregar una salida explícita.
+
+Nota: los 4 puntos de la pasada anterior (reduced-motion, mascota ausente, label de progreso ausente) quedaron corregidos y verificados en código/screenshot — no se repiten como defectos nuevos.
