@@ -33,6 +33,9 @@
   --accent: #BD5227;
   --accent-2: #F2A65A;         /* 2ª nota ámbar (FICHA-ARTE.md) — solo decorativa, nunca texto sobre ella */
 
+  /* ── SEMÁNTICO ── */
+  --success: #45BF9A;          /* menta — ÚNICO uso: estado "hecho" (FICHA-ARTE.md) */
+
   /* ── FORMA ── */
   --radius-card: 22px;
   --radius-button: 999px;      /* pill, del brand kit */

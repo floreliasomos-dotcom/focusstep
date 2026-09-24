@@ -1,6 +1,35 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-24 · Fase: arrancando Sesión 4 (onboarding, paywall y login)
+Última actualización: 2026-09-24 · Fase: Sesión 4 — onboarding, paywall y login CONSTRUIDOS,
+pendiente de veredicto del revisor-visual (en curso)
+
+## Sesión 4 — Onboarding, paywall y login (construidos)
+
+- `/onboarding`: quiz de 4 preguntas (dolores de FICHA-AVATAR.md) con chips + escape hatch
+  ("Otra cosa") en la pregunta de fracasos previos, barra de progreso animada, pantalla de
+  RECONOCIMIENTO personalizada (detecta si mencionó "rachas" y adapta el texto), pantalla de
+  PRIMERA VICTORIA (<60s: elige/completa un micro-hábito sugerido según su respuesta de
+  "momento del día", con animación de recompensa: botón pasa a verde-menta + check), y loading
+  "Construyendo tu plan" con líneas personalizadas con SUS respuestas reales + anillo animado.
+  Pasa las respuestas a `/paywall` por `sessionStorage` (no hay backend real todavía).
+- `/paywall`: soft paywall de una sola página (headline con su respuesta de "momento del día"
+  en acento, inversión visible "hecho con tus N respuestas y tu primer paso completado"),
+  3 features con checks, timeline del trial (Hoy → Día 5 aviso → Día 7 cobro $34.99/año),
+  planes anual (recomendado, preseleccionado, badge) y mensual idénticos a la landing, CTA
+  "Empezar mis 7 días gratis", línea de reversibilidad, "Ahora no" y trust row sin la palabra
+  "garantía" (mismo motivo que la landing — FICHA-MERCADO.md §4 pendiente). Tanto el CTA de
+  pago como "Ahora no" llevan a `/entrar` — el cobro/cuenta real se conecta en Sesión 6.
+- `/entrar`: login con magic link (método primario, decisión de `26-AUTH-MODERNO.md`) + botón
+  de Google (outline, secundario) + estados idle/enviando/enviado con countdown de reenvío
+  (60s). El envío es una SIMULACIÓN en el navegador — Resend/Supabase Auth se conectan en
+  Sesión 6. Verificado en el navegador: el flujo completo onboarding → paywall → login corre
+  sin errores, con las respuestas reales viajando de pantalla en pantalla.
+- Componentes compartidos del funnel en `components/funnel/ui.tsx` (chips, barra de progreso,
+  botón primario, transiciones) — mismo brand kit de FICHA-ARTE.md (token `--success` #45BF9A
+  agregado a `components/landing/tokens.css` para el estado "hecho", antes solo vivía en los
+  mockups HTML).
+- Pendiente: veredicto del revisor-visual independiente para onboarding y paywall (en curso,
+  screenshots en `docs/revisiones/onboarding-375.png` y `docs/revisiones/paywall-375.png`).
 
 ## Decisión reafirmada: web app, no app nativa (2026-09-24)
 
