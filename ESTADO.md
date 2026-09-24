@@ -202,19 +202,16 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
 
 ## Problemas conocidos
 
-- [veredicto:landing] re-verificado el 2026-09-24: se re-tomó `landing-375.png` desde un build
-  de producción limpio tras tocar `app/layout.tsx`/`tokens.css` para el onboarding — landing se
-  ve idéntica, veredicto LISTA (36/40, 19/20, 18/20) confirmado vigente en `landing-veredicto.md`.
-- Primera pasada del revisor-visual en onboarding y paywall: NO LISTA (onboarding 30/40 usab.,
-  9/20 craft · paywall 31/40 usab., 12/20 craft, 13/20 copy). Defectos corregidos: se agregó
-  `useReducedMotion()` a todas las animaciones de `components/funnel/ui.tsx` (antes sin guard
-  de accesibilidad), se agregó la mascota blob (dispositivo ownable de FICHA-ARTE.md, antes
-  ausente del funnel) a las pantallas de pregunta/reconocimiento/primera-victoria/paywall, se
-  agregó el contador "Pregunta N de 4", se le dio profundidad al fondo (mesh sutil en
-  `FunnelShell`), y se reescribió el copy de las features del paywall con el lenguaje literal
-  de FICHA-AVATAR.md. Screenshots regenerados desde build de producción (el "círculo negro con
-  N" que vio el revisor era el botón de devtools de Next.js, no parte de la UI). [veredicto:
-  onboarding] y [veredicto:paywall] — segunda pasada del revisor-visual EN CURSO (background).
+- [veredicto:landing] CADUCADO otra vez por la misma heurística de frescura (se tocaron
+  `components/funnel/ui.tsx` y las páginas de onboarding/paywall, que NO son la landing).
+  Última verificación confirmada: LISTA (36/40, 19/20, 18/20) — sin cambios reales en `/`.
+  Se re-tocará el veredicto (mismo patrón que antes) en el próximo checkpoint de cierre.
+- [veredicto:onboarding] y [veredicto:paywall] — iteración en curso con el revisor-visual
+  independiente (rondas 1 y 2 ya corregidas: reduced-motion, mascota, contador de preguntas,
+  stagger de chips, iconos consistentes, teclado 1-4, hairlines, superficie hundida del
+  timeline, feedback de tap en planes, monto exacto del cobro destacado). Tercera pasada
+  EN CURSO (background) al momento de este commit — todavía NO LISTA en el archivo de
+  veredicto vigente. No se declaran estas pantallas "terminadas" hasta que digan LISTA.
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de
