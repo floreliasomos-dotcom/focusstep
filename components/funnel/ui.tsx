@@ -6,7 +6,7 @@
 
 import type { ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ChevronLeft, type LucideIcon } from 'lucide-react';
+import { ChevronLeft, X, type LucideIcon } from 'lucide-react';
 
 // Mascota blob — el dispositivo ownable de FICHA-ARTE.md (el mismo de direcciones-abc.html /
 // vista-previa-app.html), reconstruido aquí en código real para que el onboarding no pierda
@@ -57,11 +57,14 @@ export function FunnelShell({ children }: { children: ReactNode }) {
 export function BarraProgreso({
   pct,
   onAtras,
+  onSalir,
   pasoActual,
   totalPasos,
 }: {
   pct: number;
   onAtras?: () => void;
+  /** Salida global del funnel (siempre visible, distinta del "Atrás" por pregunta). */
+  onSalir?: () => void;
   pasoActual?: number;
   totalPasos?: number;
 }) {
@@ -89,6 +92,16 @@ export function BarraProgreso({
             transition={{ duration: reduce ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
           />
         </div>
+        {onSalir && (
+          <button
+            type="button"
+            onClick={onSalir}
+            aria-label="Salir del recorrido"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full text-[var(--text-secondary)]"
+          >
+            <X size={20} />
+          </button>
+        )}
       </div>
       {pasoActual && totalPasos && (
         <p className="pl-14 text-[12px] font-semibold text-[var(--text-secondary)]">

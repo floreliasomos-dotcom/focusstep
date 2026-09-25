@@ -110,6 +110,7 @@ export default function Onboarding() {
       <BarraProgreso
         pct={pct}
         onAtras={paso > 0 && paso < 6 ? atras : undefined}
+        onSalir={paso < 6 ? () => router.push('/') : undefined}
         pasoActual={paso < PREGUNTAS.length ? paso + 1 : undefined}
         totalPasos={paso < PREGUNTAS.length ? PREGUNTAS.length : undefined}
       />
@@ -174,6 +175,7 @@ function PantallaPregunta({
   esUltima: boolean;
 }) {
   const [mostrarInput, setMostrarInput] = useState(false);
+  const tieneEscape = pregunta.opciones.some((op) => 'escape' in op && op.escape);
 
   function elegirOpcion(op: (typeof pregunta.opciones)[number]) {
     if ('escape' in op && op.escape) setMostrarInput(true);
@@ -181,10 +183,23 @@ function PantallaPregunta({
   }
 
   return (
-    <div className="flex flex-1 flex-col pt-6">
+    <div
+      className="flex flex-1 flex-col pt-6"
+      onKeyDown={
+        tieneEscape
+          ? undefined
+          : (e) => {
+              const n = Number(e.key);
+              if (n >= 1 && n <= pregunta.opciones.length) elegirOpcion(pregunta.opciones[n - 1]);
+            }
+      }
+    >
       <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
         {pregunta.pregunta}
       </h1>
+      {!tieneEscape && (
+        <p className="mt-1 text-[12px] text-[var(--text-tertiary)]">Tip: puedes usar las teclas 1-{pregunta.opciones.length}</p>
+      )}
       <div className="mt-8 flex flex-col gap-3">
         {pregunta.opciones.map((op, i) => (
           <Chip
@@ -238,7 +253,7 @@ function PantallaReconocimiento({
       <h2 className="text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">
         Tus respuestas te describen
       </h2>
-      <p className="max-w-[32ch] text-[16px] leading-relaxed text-[var(--text-secondary)]">
+      <p className="max-w-[32ch] rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4 text-[16px] leading-relaxed text-[var(--text-secondary)]">
         Cada vez que lo dejaste, no fue por falta de voluntad —{' '}
         <span className="font-semibold text-[var(--text-primary)]">
           {respuestas.fracasos?.toLowerCase().includes('rachas')
@@ -268,15 +283,17 @@ function PantallaPrimeraVictoria({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 py-8 text-center">
       <Mascota size={56} contenta={completa} />
-      <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--accent)]">
-        Tu primer paso — menos de 60 segundos
-      </p>
-      <h2 className="text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">
-        {habito}
-      </h2>
-      <p className="max-w-[32ch] text-[16px] text-[var(--text-secondary)]">
-        Pruébalo ahora mismo. Así se siente completar tu único paso del día.
-      </p>
+      <div className="rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--accent)]">
+          Tu primer paso — menos de 60 segundos
+        </p>
+        <h2 className="text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">
+          {habito}
+        </h2>
+        <p className="max-w-[32ch] text-[16px] text-[var(--text-secondary)]">
+          Pruébalo ahora mismo. Así se siente completar tu único paso del día.
+        </p>
+      </div>
 
       <motion.button
         type="button"
@@ -301,7 +318,7 @@ function PantallaPrimeraVictoria({
         )}
       </motion.button>
 
-      {completa ? (
+      {completa && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -310,8 +327,6 @@ function PantallaPrimeraVictoria({
           <p className="font-semibold text-[var(--accent)]">Así de simple es un día con FocusStep</p>
           <BotonPrimario onClick={onContinuar}>Continuar</BotonPrimario>
         </motion.div>
-      ) : (
-        <div className="h-14 w-full pt-4" aria-hidden="true" />
       )}
     </div>
   );
@@ -329,6 +344,10 @@ function PantallaLoading({ respuestas, habito }: { respuestas: Respuestas; habit
 
   useEffect(() => {
     const intervalos = lineas.map((_, i) => setTimeout(() => setActiva(i + 1), 700 + i * 900));
+    // Un último tick para que la línea final también pase a "hecho" (check) antes de
+    // transicionar al paywall, en vez de quedarse pulsando indefinidamente (bug real
+    // detectado por el revisor-visual).
+    intervalos.push(setTimeout(() => setActiva(lineas.length + 1), 700 + lineas.length * 900 + 500));
     const barra = setInterval(() => setPct((p) => Math.min(100, p + 4)), 160);
     return () => {
       intervalos.forEach(clearTimeout);
@@ -361,7 +380,7 @@ function PantallaLoading({ respuestas, habito }: { respuestas: Respuestas; habit
       <ul className="flex w-full flex-col gap-3 text-left">
         {lineas.map((linea, i) => (
           <li key={linea} className={`flex items-center gap-3 text-[16px] ${i < activa ? 'opacity-100' : 'opacity-40'}`}>
-            {i < activa - 1 || (i === activa - 1 && i === lineas.length - 1) ? (
+            {i < activa - 1 ? (
               <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 6 9 17l-5-5" />
