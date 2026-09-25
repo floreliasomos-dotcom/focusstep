@@ -34,6 +34,7 @@ export default function Paywall() {
   const [respuestasN, setRespuestasN] = useState(0);
   const [momento, setMomento] = useState<string | undefined>();
   const [enviando, setEnviando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState(false);
 
   useEffect(() => {
     try {
@@ -52,8 +53,18 @@ export default function Paywall() {
 
   function continuar() {
     setEnviando(true);
-    sessionStorage.setItem('focusstep_plan_elegido', plan);
-    router.push('/entrar?origen=paywall');
+    setErrorEnvio(false);
+    try {
+      sessionStorage.setItem('focusstep_plan_elegido', plan);
+      router.push('/entrar?origen=paywall');
+    } catch {
+      setEnviando(false);
+      setErrorEnvio(true);
+      return;
+    }
+    // Salvavidas: si la navegación no resuelve en unos segundos (conexión lenta,
+    // error de router), no dejamos el botón congelado en "Un momento…" para siempre.
+    setTimeout(() => setEnviando(false), 4000);
   }
 
   function ahoraNo() {
@@ -137,6 +148,11 @@ export default function Paywall() {
           <BotonPrimario onClick={continuar} disabled={enviando}>
             {enviando ? 'Un momento…' : 'Empezar mis 7 días gratis'}
           </BotonPrimario>
+          {errorEnvio && (
+            <p className="mt-2 text-center text-[12px] font-semibold text-[var(--accent)]">
+              Algo falló. Intenta de nuevo.
+            </p>
+          )}
           <p className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
             Hoy no pagas nada · te avisamos antes del cobro · cancela cuando quieras
           </p>
@@ -252,7 +268,12 @@ function Timeline() {
   const nodos = [
     { titulo: 'Hoy — acceso completo', sub: 'Todo tu plan, sin límites', activo: true, clave: false },
     { titulo: 'Día 5 — te avisamos', sub: 'Correo antes de cualquier cobro', activo: true, clave: false },
-    { titulo: 'Día 7 — primer cobro: $34.99/año', sub: 'Cancela antes sin costo', activo: false, clave: true },
+    {
+      titulo: 'Día 7 — primer cobro: $34.99/año',
+      sub: 'Cancela antes sin costo, en 1 tap desde tu cuenta',
+      activo: false,
+      clave: true,
+    },
   ];
   return (
     <div className="flex flex-col gap-1">
