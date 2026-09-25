@@ -206,15 +206,19 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
   `components/funnel/ui.tsx` y las páginas de onboarding/paywall, que NO son la landing).
   Última verificación confirmada: LISTA (36/40, 19/20, 18/20) — sin cambios reales en `/`.
   Se re-tocará el veredicto (mismo patrón que antes) en el próximo checkpoint de cierre.
-- [veredicto:onboarding] y [veredicto:paywall] — cuarta iteración con el revisor-visual
-  independiente EN CURSO (background). Rondas previas corregidas: reduced-motion, mascota,
-  contador de preguntas, stagger de chips, iconos consistentes, hairlines, superficie hundida
-  del timeline, feedback de tap en planes/X, monto exacto del cobro destacado, radio del ícono
-  con token correcto, salida visible desde el paso 1. BUG REAL corregido en la ronda 3: el
-  atajo de teclado 1-4 (agregado en la ronda 2) interceptaba los dígitos escritos en el campo
-  libre "Otra cosa" y seleccionaba una opción por error — se eliminó por completo en vez de
-  parchearlo, ya que no aportaba valor descubrible. Todavía NO LISTA en el archivo de veredicto
-  vigente. No se declaran estas pantallas "terminadas" hasta que digan LISTA.
+- [veredicto:onboarding] **LISTA** (2026-09-25, novena pasada): 38/40 usabilidad, 18/20 craft.
+  Pasó por 9 rondas del revisor-visual independiente. Se corrigieron 2 bugs reales: (a) el
+  atajo de teclado 1-4 interceptaba los dígitos del campo libre "Otra cosa" — se eliminó y se
+  reintrodujo SOLO en preguntas sin campo de texto; (b) `--radius-btn` no existía en tokens.css
+  (solo `--radius-button`), dejando el CTA principal de todo el funnel con esquinas cuadradas.
+  También: mascota blob incorporada, reduced-motion en toda animación, contador "Pregunta N de
+  4", superficies elevadas para profundidad, salida global (X) además del back por pregunta,
+  contraste AA corregido en el eyebrow de Primera Victoria, CTA del texto libre nunca queda
+  "pill muerto". Defectos restantes son cosméticos/no bloqueantes (ver veredicto completo).
+- [veredicto:paywall] — novena pasada EN CURSO (background). Última confirmada: 34/40, 18/20,
+  17/20 copy, con diagnóstico EXPLÍCITO del revisor de que el techo restante es estructural
+  (endpoint de pago real y plazo de garantía verificado, ambos Sesión 6/Hotmart) más un fix ya
+  aplicado ("Editar mis respuestas" ahora es motion.button + router.push, no `<a>`).
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de

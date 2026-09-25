@@ -1,21 +1,16 @@
 # VEREDICTO revisor-visual — onboarding
 Fecha: 2026-09-25 00:00
 Screenshot: docs/revisiones/onboarding-375.png
-Usabilidad: 34/40
-Craft: 16/20
+Usabilidad: 38/40
+Craft: 18/20
 Copy (si vende): N-A
 Fidelidad (si hubo referencia): N-A
-Veredicto: NO LISTA
+Veredicto: LISTA
 Top defectos:
-1. [`components/funnel/ui.tsx` `FunnelShell`, fondo de toda la pantalla] Los degradés radiales de profundidad (`accent 16%`/`accent-2 14%`) son casi imperceptibles a 375px — en el screenshot el fondo se lee como un fill plano de un solo tono → sube la opacidad a ~24-28% o añade un segundo tono de mancha más cerca del centro para que el nivel "base" se distinga a simple vista del `--surface-2` de la card; hoy el sistema de 3 niveles existe en el código pero no se VE en el render, que es lo que puntúa el eje de profundidad.
-2. [`app/onboarding/page.tsx` `PantallaPrimeraVictoria`, eyebrow "TU PRIMER PASO — MENOS DE 60 SEGUNDOS"] Texto en `--accent` a 12px bold sobre `--surface-2`: la ficha reporta 4.3:1 de acento contra fondo, por debajo del 4.5:1 AA que exige texto pequeño (el eyebrow no califica como "texto grande") → oscurece un tick el acento SOLO para este uso de texto (o sube el tamaño/peso a un umbral que califique como texto grande) para no fallar contraste en un elemento que se lee en cada pantalla de victoria.
-3. [`app/onboarding/page.tsx` `PantallaPregunta`, botón "Continuar" tras "Otra cosa (escribe la tuya)"] Sigue naciendo `disabled` por defecto hasta que el usuario escribe algo (pill al 50% de opacidad) → conviértelo en habilitado siempre y, si el usuario lo toca vacío, muestra el hint de "Escribe algo para continuar" con foco en el input (el patrón de pill-muerto-esperando-el-form-perfecto es justo el que la rúbrica de CTA vivo prohíbe, incluso en un CTA secundario).
-4. [`app/onboarding/page.tsx` `PantallaPregunta`, tip "Tip: puedes usar las teclas 1-N"] Vive en 12px gris terciario debajo del título, fácil de pasar por alto la primera vez que aparece el atajo → dale un tratamiento de chip pequeño (fondo `--surface-2` + ícono teclado) la PRIMERA vez que se muestra en la sesión, para que el atajo se note sin tener que leer letra chica.
-5. [`app/onboarding/page.tsx` `PantallaLoading`, líneas del checklist] Las líneas de "análisis" muestran el mismo copy en cada sesión sin variación real por respuesta más allá de interpolar el string — el usuario que ya vio el flujo una vez reconoce que es texto de relleno más que un análisis genuino → no es bloqueante pero es la brecha entre "3, ojo entrenado" y "4, ejemplar" en Ayuda contextual/Errores; se resuelve solo con más ramas de copy condicional, no es un cambio de una línea.
+1. [Fondo global, FunnelShell] El mesh radial (26%/24%) sigue leyéndose casi plano porque acento y --bg comparten la misma familia cálida — sube a 32-34% en el radial superior o añade un segundo stop más frío para que el tinte se perciba sin lupa → mejora EJE 2 (hoy 3/4).
+2. [Pantalla Primera Victoria, botón circular "Completar"] No tiene atajo de teclado anunciado (las preguntas sí dicen "Tip: teclas 1-N") — añadir un hint sutil "o presiona Espacio" o dejarlo así está bien, pero es la única pantalla del flujo sin ese refuerzo → detalle menor de flexibilidad (h7).
+3. [Todo el flujo, app/onboarding/page.tsx] Cero manejo de error visible para fallos reales (sessionStorage bloqueado en modo privado, router.push fallido): no rompe la experiencia feliz pero un QA técnico lo detecta de inmediato → agregar try/catch con fallback silencioso antes de escalar tráfico.
+4. [Mascota, components/funnel/ui.tsx] El blob sigue siendo geométrico simple (2 puntos + arco); es reconocible pero no tan distintivo como podría con un detalle de firma adicional (textura, sombra propia) → EJE 3 pasa el test anti-clon pero no es un 4.
+5. [PantallaLoading] Las 4 líneas de "construyendo tu plan" entran todas ya visibles con solo opacity, sin stagger de entrada propio (dependen del check que se activa después) — un stagger iniical de 60-80ms entre líneas reforzaría el EJE 4.
 
-Nota para la siguiente pasada: los 5 defectos previos (salida global, profundidad, hueco vertical,
-atajos de teclado, bug del check final) están correctamente resueltos y verificados en código +
-screenshot. Los 5 de ARRIBA son nuevos y SÍ son accionables sin tocar backend — en particular los
-ítems 1-3 son cambios de una línea/token (opacidad del gradiente, un tono de acento, quitar un
-`disabled`) que deberían bastar para cruzar 36/40. El ítem 5 es el único que requiere trabajo de
-copy no trivial; no es necesario para el gate de usabilidad pero sí para acercarse a un 4 ejemplar.
+GATE: Usabilidad 38/40 (≥36 ✓) y Craft 18/20 (≥16 ✓) — CRUZA el gate doble. Los 3 fixes de la pasada anterior quedan confirmados: mesh de fondo ahora perceptible en pantalla completa (aunque sigue siendo el punto más débil del craft), contraste del eyebrow calculado en ~4.73:1 sobre --surface-2 (pasa AA 4.5:1), y el botón "Continuar" del campo de texto libre nunca queda disabled — solo no reacciona si el input está vacío, con el hint ya visible explicando por qué. No quedan bloqueantes para declarar esta pantalla LISTA.
