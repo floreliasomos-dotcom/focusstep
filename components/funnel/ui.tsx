@@ -45,8 +45,8 @@ export function FunnelShell({ children }: { children: ReactNode }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            'radial-gradient(720px 460px at 50% -10%, color-mix(in oklab, var(--accent) 16%, transparent) 0%, transparent 62%), ' +
-            'radial-gradient(600px 420px at 100% 105%, color-mix(in oklab, var(--accent-2) 14%, transparent) 0%, transparent 58%)',
+            'radial-gradient(720px 460px at 50% -10%, color-mix(in oklab, var(--accent) 26%, transparent) 0%, transparent 62%), ' +
+            'radial-gradient(600px 420px at 100% 105%, color-mix(in oklab, var(--accent-2) 24%, transparent) 0%, transparent 58%)',
         }}
       />
       {children}

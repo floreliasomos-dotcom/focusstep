@@ -224,7 +224,7 @@ function PantallaPregunta({
           {!otraCosa.trim() && (
             <p className="text-[12px] text-[var(--text-secondary)]">Escribe algo para poder continuar.</p>
           )}
-          <BotonPrimario disabled={!otraCosa.trim()} onClick={() => onElegir(otraCosa.trim())}>
+          <BotonPrimario onClick={() => otraCosa.trim() && onElegir(otraCosa.trim())}>
             Continuar
           </BotonPrimario>
         </div>
@@ -284,7 +284,10 @@ function PantallaPrimeraVictoria({
     <div className="flex flex-1 flex-col items-center justify-center gap-6 py-8 text-center">
       <Mascota size={56} contenta={completa} />
       <div className="rounded-[var(--radius-card)] bg-[var(--surface-2)] p-4">
-        <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--accent)]">
+        <p
+          className="text-[12px] font-bold uppercase tracking-wide"
+          style={{ color: 'color-mix(in oklab, var(--accent) 80%, var(--text-primary) 20%)' }}
+        >
           Tu primer paso — menos de 60 segundos
         </p>
         <h2 className="text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">

@@ -150,9 +150,14 @@ export default function Paywall() {
               Ahora no
             </motion.button>
             <span aria-hidden="true">·</span>
-            <a href="/onboarding" className="underline">
+            <motion.button
+              type="button"
+              onClick={() => router.push('/onboarding')}
+              whileTap={reduce ? undefined : { scale: 0.95 }}
+              className="underline"
+            >
               Editar mis respuestas
-            </a>
+            </motion.button>
           </div>
           <p className="mt-4 text-center text-[12px] text-[var(--text-tertiary)]">
             Pago seguro procesado por Hotmart
