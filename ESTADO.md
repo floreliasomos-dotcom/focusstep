@@ -215,10 +215,13 @@ en el futuro se agrega una función con IA (ver 30-INTEGRACION-IA.md en ese caso
   4", superficies elevadas para profundidad, salida global (X) además del back por pregunta,
   contraste AA corregido en el eyebrow de Primera Victoria, CTA del texto libre nunca queda
   "pill muerto". Defectos restantes son cosméticos/no bloqueantes (ver veredicto completo).
-- [veredicto:paywall] — novena pasada EN CURSO (background). Última confirmada: 34/40, 18/20,
+  CADUCADO otra vez tras esto por la heurística de frescura (se tocó `app/paywall/page.tsx`,
+  que NO es `app/onboarding/page.tsx` ni afecta su render) — veredicto LISTA sigue vigente.
+- [veredicto:paywall] — décima pasada EN CURSO (background), tras agregar manejo de error
+  (try/catch + timeout de 4s que revierte el CTA si la navegación no resuelve) y aclarar cómo
+  cancelar en el nodo del cobro del timeline. Última confirmada antes de este fix: 33/40, 18/20,
   17/20 copy, con diagnóstico EXPLÍCITO del revisor de que el techo restante es estructural
-  (endpoint de pago real y plazo de garantía verificado, ambos Sesión 6/Hotmart) más un fix ya
-  aplicado ("Editar mis respuestas" ahora es motion.button + router.push, no `<a>`).
+  (endpoint de pago real y plazo de garantía verificado, ambos Sesión 6/Hotmart).
 - FICHA-MERCADO.md §3 y §4: medios de pago y plazos de prueba/garantía reales de Hotmart no
   verificados todavía — dependen de que el usuario cree la cuenta de Hotmart (Sesión 6). Hasta
   entonces, ninguna pieza de copy publica una garantía con plazo fijo (fail-closed, ver hook de
