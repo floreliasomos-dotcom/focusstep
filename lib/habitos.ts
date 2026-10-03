@@ -1,0 +1,242 @@
+// Capa de datos local de FocusStep — Sesión 5 (app interna sin backend todavía).
+// Misma FORMA que tendrá en Supabase (ver ESTADO.md → "Los 3 pilares técnicos"), para que
+// migrar a Sesión 6 no obligue a reescribir la UI: la UI nunca toca `racha`/`congeladores`
+// directo, siempre pasa por `marcarHechoHoy()` — el equivalente local de la RPC
+// `marcar_habito_hecho` que hará el servidor.
+
+export type MomentoDia = 'Mis mañanas' | 'Mi trabajo' | 'Mi descanso';
+
+export interface Habito {
+  id: string;
+  nombre: string;
+  color: string;
+  momentoDia: MomentoDia;
+  activo: boolean;
+  creadoEn: string;
+}
+
+export interface RegistroHabito {
+  habitoId: string;
+  fecha: string; // 'YYYY-MM-DD' en la zona del usuario
+  completadoEn: string;
+}
+
+export interface Perfil {
+  rachaActual: number;
+  congeladores: number;
+  ultimaActividadOn: string | null;
+  tz: string;
+}
+
+const CLAVE_HABITOS = 'focusstep_habitos';
+const CLAVE_REGISTROS = 'focusstep_registros';
+const CLAVE_PERFIL = 'focusstep_perfil';
+const CLAVE_DESHACER = 'focusstep_deshacer';
+
+interface Deshacer {
+  habitoId: string;
+  fecha: string;
+  perfilAnterior: Perfil;
+}
+
+const PALETA_TAGS = ['#F2A65A', '#45BF9A', '#BD5227'] as const; // ámbar, menta, terracota — FICHA-ARTE.md
+
+const HABITO_SUGERIDO: Record<MomentoDia, string> = {
+  'Mis mañanas': 'Estirar 5 minutos al despertar',
+  'Mi trabajo': 'Respirar 1 minuto antes de tu primera reunión',
+  'Mi descanso': 'Anotar 1 cosa buena del día antes de dormir',
+};
+
+function tzUsuario(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Bogota';
+  } catch {
+    return 'America/Bogota';
+  }
+}
+
+export function hoyLocal(tz: string = tzUsuario()): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+}
+
+function leer<T>(clave: string, valorDefecto: T): T {
+  if (typeof window === 'undefined') return valorDefecto;
+  try {
+    const raw = localStorage.getItem(clave);
+    return raw ? (JSON.parse(raw) as T) : valorDefecto;
+  } catch {
+    return valorDefecto;
+  }
+}
+
+function escribir<T>(clave: string, valor: T): boolean {
+  try {
+    localStorage.setItem(clave, JSON.stringify(valor));
+    return true;
+  } catch {
+    return false; // almacenamiento no disponible (privado/lleno) — el llamador decide qué avisar
+  }
+}
+
+export function obtenerHabitos(): Habito[] {
+  return leer<Habito[]>(CLAVE_HABITOS, []);
+}
+
+export function obtenerRegistros(): RegistroHabito[] {
+  return leer<RegistroHabito[]>(CLAVE_REGISTROS, []);
+}
+
+export function obtenerPerfil(): Perfil {
+  return leer<Perfil>(CLAVE_PERFIL, {
+    rachaActual: 0,
+    congeladores: 0,
+    ultimaActividadOn: null,
+    tz: tzUsuario(),
+  });
+}
+
+// Migra la respuesta del onboarding (sessionStorage) a un hábito real la primera vez que se
+// abre la app interna. Si no hay respuestas de onboarding ni hábitos guardados, siembra un
+// hábito de ejemplo — la app nunca se enseña vacía (32-DEL-MVP-AL-PRODUCTO.md).
+export function inicializarDatos(): Habito[] {
+  const existentes = obtenerHabitos();
+  if (existentes.length > 0) return existentes;
+
+  let momento: MomentoDia = 'Mis mañanas';
+  try {
+    const raw = sessionStorage.getItem('focusstep_onboarding');
+    if (raw) {
+      const r = JSON.parse(raw) as { momento?: MomentoDia };
+      if (r.momento) momento = r.momento;
+    }
+  } catch {
+    /* sin respuestas de onboarding — se usa el momento por defecto */
+  }
+
+  const habito: Habito = {
+    id: crypto.randomUUID(),
+    nombre: HABITO_SUGERIDO[momento],
+    color: PALETA_TAGS[0],
+    momentoDia: momento,
+    activo: true,
+    creadoEn: new Date().toISOString(),
+  };
+  const habitos = [habito];
+  escribir(CLAVE_HABITOS, habitos);
+  return habitos;
+}
+
+export function habitoDeHoy(): Habito | null {
+  const activos = obtenerHabitos().filter((h) => h.activo);
+  return activos[0] ?? null;
+}
+
+export function yaCompletadoHoy(habitoId: string): boolean {
+  const hoy = hoyLocal();
+  return obtenerRegistros().some((r) => r.habitoId === habitoId && r.fecha === hoy);
+}
+
+function diferenciaDias(desde: string, hasta: string): number {
+  const a = new Date(desde + 'T00:00:00');
+  const b = new Date(hasta + 'T00:00:00');
+  return Math.round((b.getTime() - a.getTime()) / 86_400_000);
+}
+
+// Equivalente local de la RPC `marcar_habito_hecho` (SECURITY DEFINER) que hará el servidor
+// en Sesión 6 — inserta el registro y recalcula la racha en un solo lugar, nunca desde la UI.
+// El perfil ANTERIOR se persiste (CLAVE_DESHACER, no solo en memoria) para que "deshacer" siga
+// funcionando aunque la pantalla se remonte entre medias — navegar a otra pestaña y volver con
+// la TabBar y regresar rompía el deshacer porque vivía solo en useState (bug real detectado por
+// el revisor-visual). `guardado` avisa si el almacenamiento falló en vez de mostrar "hecho" en
+// silencio sobre un guardado que no ocurrió (otro defecto real ya corregido).
+export function marcarHechoHoy(habitoId: string): { perfil: Perfil; perfilAnterior: Perfil; yaEstaba: boolean; guardado: boolean } {
+  const hoy = hoyLocal();
+  const registros = obtenerRegistros();
+  const perfilAnterior = obtenerPerfil();
+  if (registros.some((r) => r.habitoId === habitoId && r.fecha === hoy)) {
+    return { perfil: perfilAnterior, perfilAnterior, yaEstaba: true, guardado: true };
+  }
+
+  registros.push({ habitoId, fecha: hoy, completadoEn: new Date().toISOString() });
+  const guardadoRegistro = escribir(CLAVE_REGISTROS, registros);
+
+  const p = perfilAnterior;
+  let nuevaRacha: number;
+  let congeladores = p.congeladores;
+
+  if (p.ultimaActividadOn === null) {
+    nuevaRacha = 1;
+  } else {
+    const dias = diferenciaDias(p.ultimaActividadOn, hoy);
+    if (dias <= 1) {
+      nuevaRacha = p.rachaActual + 1;
+    } else {
+      const diasPerdidos = dias - 1;
+      if (diasPerdidos <= congeladores) {
+        congeladores -= diasPerdidos;
+        nuevaRacha = p.rachaActual + 1;
+      } else {
+        nuevaRacha = 1; // Reinicio Amigable: nunca se muestra en rojo, solo se recomienza
+      }
+    }
+  }
+
+  const perfil: Perfil = { ...p, rachaActual: nuevaRacha, congeladores, ultimaActividadOn: hoy };
+  const guardadoPerfil = escribir(CLAVE_PERFIL, perfil);
+  escribir(CLAVE_DESHACER, { habitoId, fecha: hoy, perfilAnterior } satisfies Deshacer);
+  return { perfil, perfilAnterior, yaEstaba: false, guardado: guardadoRegistro && guardadoPerfil };
+}
+
+// El deshacer solo es válido para EL MISMO hábito y EL MISMO día en que se completó — pasado
+// eso (día siguiente, u otro hábito) no hay nada que deshacer.
+export function obtenerDeshacerDisponible(habitoId: string): Perfil | null {
+  const d = leer<Deshacer | null>(CLAVE_DESHACER, null);
+  if (!d || d.habitoId !== habitoId || d.fecha !== hoyLocal()) return null;
+  return d.perfilAnterior;
+}
+
+// Deshace un toque accidental de "Completar" — quita el registro de hoy y restaura el perfil
+// exacto de antes (racha/congeladores), en vez de recalcular hacia atrás.
+export function desmarcarHechoHoy(habitoId: string, perfilAnterior: Perfil) {
+  const hoy = hoyLocal();
+  const registros = obtenerRegistros().filter((r) => !(r.habitoId === habitoId && r.fecha === hoy));
+  escribir(CLAVE_REGISTROS, registros);
+  escribir(CLAVE_PERFIL, perfilAnterior);
+  escribir(CLAVE_DESHACER, null);
+}
+
+const DIAS_SEMANA = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const;
+
+export interface DiaSemana {
+  letra: string;
+  fecha: string;
+  hecho: boolean;
+  esHoy: boolean;
+  esFuturo: boolean;
+}
+
+// Semana de lunes a domingo que contiene "hoy", con qué días ya se completó el hábito —
+// la representación de "% de cumplimiento semanal" (nunca racha lineal punitiva, Sesión 1).
+export function semanaDeHoy(habitoId: string): { dias: DiaSemana[]; completados: number } {
+  const hoy = hoyLocal();
+  const registros = new Set(obtenerRegistros().filter((r) => r.habitoId === habitoId).map((r) => r.fecha));
+  const hoyDate = new Date(hoy + 'T00:00:00');
+  const diaSemanaISO = (hoyDate.getDay() + 6) % 7; // 0 = lunes
+  const lunes = new Date(hoyDate);
+  lunes.setDate(hoyDate.getDate() - diaSemanaISO);
+
+  const dias: DiaSemana[] = DIAS_SEMANA.map((letra, i) => {
+    const d = new Date(lunes);
+    d.setDate(lunes.getDate() + i);
+    const fecha = new Intl.DateTimeFormat('en-CA').format(d);
+    return {
+      letra,
+      fecha,
+      hecho: registros.has(fecha),
+      esHoy: fecha === hoy,
+      esFuturo: fecha > hoy,
+    };
+  });
+
+  return { dias, completados: dias.filter((d) => d.hecho).length };
+}

@@ -44,7 +44,8 @@
   Uso: SOLO en CTA, mascota, dato activo, tab activo · 2ª nota: #F2A65A ámbar cálido
   (badges/detalles — NUNCA con texto encima, no pasa AA)
 - Semánticos: éxito/hecho #45BF9A menta (ÚNICO uso — universal "hecho", nunca ambiguo con el
-  acento) · error: por definir en Sesión 5-6 con ícono, nunca solo color (regla daltonismo)
+  acento) · error #B3261E rojo cálido (definido en Sesión 5 al construir `/hoy` — 6.5:1 con
+  texto blanco, 5.9:1 sobre el fondo; SIEMPRE con ícono, nunca solo color, regla daltonismo)
 - Display: Baloo 2 (pesos 600/700/800) · Body: Nunito (pesos 400/600/700)
 - Radio: 22px cards / pill botones · Espaciado base: escala 4·8·12·16·24·32·48·64
 - Dispositivo ownable: mascota blob (SVG/CSS propio, sin assets de terceros) — receta en

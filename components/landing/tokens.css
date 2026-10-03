@@ -35,6 +35,7 @@
 
   /* ── SEMÁNTICO ── */
   --success: #45BF9A;          /* menta — ÚNICO uso: estado "hecho" (FICHA-ARTE.md) */
+  --error: #B3261E;            /* rojo cálido, familia de la paleta — SIEMPRE con ícono, nunca solo color */
 
   /* ── FORMA ── */
   --radius-card: 22px;

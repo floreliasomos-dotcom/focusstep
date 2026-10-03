@@ -82,13 +82,45 @@ export default function Onboarding() {
   const [respuestas, setRespuestas] = useState<Respuestas>({});
   const [otraCosa, setOtraCosa] = useState('');
   const [victoriaCompleta, setVictoriaCompleta] = useState(false);
+  const [modoEdicion, setModoEdicion] = useState(false);
+
+  // "Editar mis respuestas" desde el paywall vuelve aquí — restaurar lo ya contestado para
+  // que la persona ajuste desde donde quedó, en vez de perder su progreso (bug real detectado
+  // por el revisor-visual: antes esto arrancaba siempre en blanco). Si llega con ?editar=1
+  // (ya completó el recorrido antes), al terminar la última pregunta vuelve directo al paywall
+  // sin repetir reconocimiento/primera victoria/loading — evita forzar 3 pantallas de más solo
+  // para cambiar 1 respuesta (segundo defecto real detectado por el revisor-visual).
+  useEffect(() => {
+    try {
+      setModoEdicion(new URLSearchParams(window.location.search).get('editar') === '1');
+      const raw = sessionStorage.getItem('focusstep_onboarding');
+      if (raw) {
+        const guardadas = JSON.parse(raw) as Respuestas;
+        setRespuestas(guardadas);
+        const siguiente = PREGUNTAS.findIndex((p) => !guardadas[p.id]);
+        setPaso(siguiente === -1 ? 0 : siguiente);
+      }
+    } catch {
+      /* sin respuestas previas — arranca en blanco, comportamiento normal */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const totalPasos = PREGUNTAS.length + 3; // + reconocimiento + victoria + loading
   const pct = Math.min(8 + (paso / totalPasos) * 92, 100);
 
   function elegir(idPregunta: string, valor: string) {
-    setRespuestas((r) => ({ ...r, [idPregunta]: valor }));
-    setTimeout(() => setPaso((p) => p + 1), 300);
+    const nuevasRespuestas = { ...respuestas, [idPregunta]: valor };
+    setRespuestas(nuevasRespuestas);
+    const esUltimaPregunta = idPregunta === PREGUNTAS[PREGUNTAS.length - 1].id;
+    setTimeout(() => {
+      if (modoEdicion && esUltimaPregunta) {
+        sessionStorage.setItem('focusstep_onboarding', JSON.stringify(nuevasRespuestas));
+        router.push('/paywall');
+      } else {
+        setPaso((p) => p + 1);
+      }
+    }, 300);
   }
 
   function atras() {

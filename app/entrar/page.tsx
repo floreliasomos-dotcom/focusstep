@@ -19,7 +19,10 @@ export default function Entrar() {
 
   function enviar(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.includes('@')) return;
+    if (!email.includes('@') || !email.includes('.')) {
+      setEstado('error');
+      return;
+    }
     setEstado('enviando');
     setTimeout(() => {
       setEstado('enviado');
@@ -63,10 +66,23 @@ export default function Entrar() {
                 required
                 autoFocus
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (estado === 'error') setEstado('idle');
+                }}
                 placeholder="tu@correo.com"
-                className="h-14 w-full rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)] bg-[var(--surface)] px-4 text-[16px] outline-none focus:border-[var(--accent)]"
+                aria-invalid={estado === 'error'}
+                className={`h-14 w-full rounded-[var(--radius-card)] border bg-[var(--surface)] px-4 text-[16px] outline-none focus:border-[var(--accent)] ${
+                  estado === 'error'
+                    ? 'border-[var(--accent)]'
+                    : 'border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)]'
+                }`}
               />
+              {estado === 'error' && (
+                <p aria-live="polite" className="text-[12px] font-semibold text-[var(--accent)]">
+                  Ese correo no se ve completo — revísalo e intenta de nuevo.
+                </p>
+              )}
               <BotonPrimario type="submit" disabled={estado === 'enviando'}>
                 {estado === 'enviando' ? 'Enviando…' : 'Enviarme mi enlace de acceso'}
               </BotonPrimario>
