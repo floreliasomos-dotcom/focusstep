@@ -1,15 +1,15 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-10-05 · Fase: Sesión 5 EN PAUSA — AUDITORÍA 10/10 ENTREGADA, ESPERANDO
-APROBACIÓN DEL USUARIO (regla: no se toca nada hasta que apruebe). Las 4 pantallas del dinero pasaron
-el gate (hoy 37/40 · landing 36/40 · onboarding 36/40 · paywall 36/40, tres por margen mínimo).
-Puntaje de la auditoría: 5/10 como producto vendible (frontend ~7.5/10; cuentas, datos, pagos,
-seguridad y medición ~1-2/10 porque aún no existen — todo es simulación en el navegador).
-`/habitos` (+ `components/app/FormularioHabito.tsx` + funciones nuevas en `lib/habitos.ts`) quedó
-ESCRITA A MEDIAS: compila y el formulario abre, pero NO pasó medición/checklist ni pruebas de
-límite/edición; `/progreso` y `/perfil` siguen como "próximamente". El usuario también pidió el
-paso a paso de las cuentas externas (GitHub, Supabase, Vercel, Resend, Hotmart, dominio) — entregado
-en el chat, aún sin ejecutar.
+Última actualización: 2026-10-05 · Fase: Sesión 5, FASE 4 de la auditoría (el usuario aprobó TODO).
+CHECKPOINT: Capas 1-2 (seguridad básica, hidratación, datos, Reinicio/pase libre base) HECHAS y
+verificadas en navegador. Capas 3-5 (/progreso, /perfil, pase libre, Reinicio Amigable, paleta, versionado) HECHAS y probadas. Decisiones de esta sesión: botón de Google
+quitado hasta Sesión 6; claims "no pide tarjeta"/"te avisamos" retirados; headers de seguridad en
+next.config.ts; patrón useHidratado (sin setState en efectos); `error.tsx`/`not-found.tsx` de marca.
+VERIFICADO (2026-10-05, build de producción, 375px): /progreso vacío y con datos, /perfil descargar+borrar en 2 pasos (redirige a /, claves limpias), pase libre al día 7 (+1), Reinicio Amigable tras 5 días. Capturas en docs/revisiones/*-375.png (progreso, perfil, hoy-reinicio, hoy-pase-libre). Pantallas secundarias: medición+checklist, sin revisor.
+HECHO tras eso (verificado en build de producción): medición local lib/analitica.ts (6 eventos, se borra con "Borrar mis datos"; Sesión 6 la envía a tabla events), SEO (metadataBase por NEXT_PUBLIC_SITE_URL, Open Graph, robots, sitemap, manifest, icono), 8 pruebas automáticas (npm test, vitest) + .github/workflows/ci.yml (typecheck, lint, test, build), supabase/migrations/0001_esquema_inicial.sql (tablas+RLS+límite 3 hábitos, SIN aplicar), eslint ignora plantillas-codigo/ y scripts/.
+SIGUIENTE: pulido de paywall/landing, re-pasar revisor-visual a landing/onboarding/paywall (veredictos caducados) y reporte de cierre.
+Puntaje auditoría inicial: 5/10 vendible (frontend ~7.5; backend/pagos/seguridad ~1-2, simulados).
+GATE (4ª pasada del revisor, 2026-10-05, capturas táctil @2x): landing 32/40·13/20·copy 17/20 NO LISTA · onboarding 32/40·14/20 NO LISTA · paywall 33/40·15/20·copy 14/20 NO LISTA · hoy 37/40·16/20 LISTA. Subió desde 29-31 pero NO alcanza 36/16. Tras la 4ª pasada se aplicó sin re-revisar: US$ en todos los precios, selector de plan accesible (radiogroup), línea de confianza en 2 renglones. Verificado: tsc ✓ lint ✓ 8 tests ✓ build ✓, CTA del paywall visible a 375x800.
 
 ## Idea y avatar (Sesión 1 — cosa juzgada, detalle completo en las fichas)
 
@@ -134,6 +134,10 @@ tiers gratuitos a escala de 300-500 usuarios) + comisión Hotmart (~9.9%, a conf
 Margen sano a $4.99/mes — gate de costo (SUELO 1) pasa sin modelar escenarios.
 
 ## Problemas conocidos
+
+- [veredicto:landing] [veredicto:onboarding] [veredicto:paywall] NO LISTA en la 2ª pasada (2026-10-05). Defectos comunes: falta prueba real/garantía nombrada (garantia: plazo sin verificar en Hotmart — FICHA-MERCADO.md; NO se inventa), fondo plano a 375px, CTA del paywall bajo el pliegue, bullets del paywall como features y no dolores, capturas del teléfono con fondo distinto a la card, pie de onboarding con atajo de teclado en capturas. Defectos que quedan (no resueltos): mascota/identidad solo dentro de las capturas de la landing, capturas con acento viejo #E2703F, footer con separador huérfano, fondo del onboarding aún plano en captura, vacío bajo las opciones, sin prueba social ni garantía (no se inventan). El tope real de copy depende de testimonios y garantía verificada (Sesión 6 / primeros usuarios). Pendiente de decisión del usuario.
+
+- [2026-10-05] veredicto landing / onboarding / paywall marcados CADUCADOS por frescura: tras la auditoría solo cambiaron /entrar, error.tsx, /habitos, /progreso, /perfil y lib/habitos.ts (no alteran el render de esas 3 pantallas); se re-revisarán con el revisor-visual antes del cierre final. Garantía: app/page.tsx solo la nombra en comentarios ("OMITIDA"); el copy visible no la promete. FICHA-MERCADO.md se completa en Sesión 6 con los plazos reales de Hotmart.
 
 - [veredicto:onboarding] LISTA por margen mínimo (2026-10-04, 9ª pasada de este ciclo: 30→31→32→33→34→35→
   36/40; craft 16/20). Errores REALES corregidos en el camino: la X borraba el avance (ahora se guarda por

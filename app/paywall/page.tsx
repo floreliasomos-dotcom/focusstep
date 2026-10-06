@@ -12,13 +12,15 @@ import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'motion/react';
 import { X, Check, AlertCircle } from 'lucide-react';
 import { BotonPrimario, FunnelShell, Mascota } from '@/components/funnel/ui';
+import { useHidratado } from '@/lib/hidratado';
+import { registrarEvento } from '@/lib/analitica';
 
 // Copy trazado a FICHA-AVATAR.md: cada feature ancla al dolor/deseo que resuelve,
 // no una lista de funciones genérica (defecto real de revisor-visual, ver docs/revisiones).
 const FEATURES = [
-  'Hábitos ilimitados — sin límite de 3 cuando ya no sientas que te abruma',
-  'Modo Día Difícil — reduce tu meta a 1 toque cuando sea necesario',
-  'Frases de tu mascota en los 3 momentos clave de tu día, sin presión',
+  'Reinicio Amigable: si faltas unos días, retomas sin historial en rojo ni culpa',
+  'Modo Día Difícil: en los días pesados tu meta baja a 1 toque',
+  'Hábitos ilimitados: sin tope de 3 cuando quieras sumar más',
 ];
 
 const MOMENTO_LABEL: Record<string, string> = {
@@ -27,32 +29,36 @@ const MOMENTO_LABEL: Record<string, string> = {
   'Mi descanso': 'tu descanso',
 };
 
+function leerRespuestas(): Record<string, string> | null {
+  try {
+    const raw = sessionStorage.getItem('focusstep_onboarding');
+    return raw ? (JSON.parse(raw) as Record<string, string>) : null;
+  } catch {
+    return null; // sin respuestas guardadas: se usa el texto genérico
+  }
+}
+
 export default function Paywall() {
   const router = useRouter();
   const reduce = useReducedMotion();
   const [plan, setPlan] = useState<'anual' | 'mensual'>('anual');
-  const [respuestasN, setRespuestasN] = useState(0);
-  const [momento, setMomento] = useState<string | undefined>();
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState(false);
   const salvavidasRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    registrarEvento('paywall_visto');
+  }, []);
 
   useEffect(() => () => {
     if (salvavidasRef.current) clearTimeout(salvavidasRef.current);
   }, []);
 
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem('focusstep_onboarding');
-      if (raw) {
-        const r = JSON.parse(raw) as Record<string, string>;
-        setRespuestasN(Object.keys(r).length);
-        setMomento(r.momento);
-      }
-    } catch {
-      /* sin respuestas guardadas — se usa el genérico */
-    }
-  }, []);
+  // Respuestas del cuestionario (sessionStorage): se leen derivadas, ya hidratado, sin setState en un efecto.
+  const hidratado = useHidratado();
+  const respuestas = hidratado ? leerRespuestas() : null;
+  const respuestasN = respuestas ? Object.keys(respuestas).length : 0;
+  const momento = respuestas?.momento;
 
   const metaLabel = (momento && MOMENTO_LABEL[momento]) || 'tu día a día';
 
@@ -61,6 +67,7 @@ export default function Paywall() {
     setErrorEnvio(false);
     try {
       sessionStorage.setItem('focusstep_plan_elegido', plan);
+      registrarEvento('plan_elegido', { plan });
       router.push('/entrar?origen=paywall');
     } catch {
       setEnviando(false);
@@ -75,6 +82,7 @@ export default function Paywall() {
 
   function ahoraNo() {
     sessionStorage.setItem('focusstep_plan_elegido', 'gratis');
+    registrarEvento('plan_gratis_elegido');
     router.push('/entrar?origen=paywall_gratis');
   }
 
@@ -98,7 +106,7 @@ export default function Paywall() {
 
   return (
     <FunnelShell>
-      <div className="flex items-center justify-between py-2">
+      <div className="flex items-center justify-between">
         <motion.button
           type="button"
           onClick={() => router.push('/')}
@@ -108,7 +116,6 @@ export default function Paywall() {
         >
           <X size={20} />
         </motion.button>
-        <p className="hidden text-[12px] text-[var(--text-tertiary)] [@media(pointer:fine)]:block">Tip: usa 1, 2 y Enter</p>
       </div>
 
       <motion.div
@@ -118,17 +125,25 @@ export default function Paywall() {
         className="flex flex-1 flex-col"
       >
         <Bloque>
-          <Mascota size={48} />
-          <h1 className="mt-3 text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
-            Tu plan para <span className="text-[var(--accent)]">{metaLabel}</span> está listo
-          </h1>
+          <div className="flex items-center gap-3">
+            <motion.div
+              animate={reduce ? undefined : { rotate: [0, -10, 8, -4, 0] }}
+              transition={{ duration: 1.2, delay: 0.4, ease: 'easeInOut' }}
+              className="shrink-0"
+            >
+              <Mascota size={64} />
+            </motion.div>
+            <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
+              Tu plan <span className="text-[var(--accent)]">sin culpa</span> está listo
+            </h1>
+          </div>
           <p className="mt-2 text-[16px] text-[var(--text-secondary)]">
-            Hecho con tus {respuestasN || 4} respuestas y tu primer paso ya completado.
+            Pensado para {metaLabel}, con tus {respuestasN || 4} respuestas y tu primer paso ya hecho.
           </p>
         </Bloque>
 
         <Bloque
-          className="mt-6 rounded-[var(--radius-card)] border border-transparent p-4"
+          className="mt-4 rounded-[var(--radius-card)] border border-transparent p-4"
           style={{
             background:
               'linear-gradient(var(--surface), var(--surface)) padding-box, ' +
@@ -142,13 +157,13 @@ export default function Paywall() {
                 initial={{ opacity: 0, x: reduce ? 0 : -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: reduce ? 0.1 : 0.3, delay: reduce ? 0 : 0.3 + i * 0.15 }}
-                className="flex items-center gap-3 text-[16px] font-medium"
+                className="flex items-start gap-3 text-[16px] font-medium"
               >
                 <motion.span
                   initial={{ scale: reduce ? 1 : 0 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: reduce ? 0.1 : 0.3, delay: reduce ? 0 : 0.45 + i * 0.15 }}
-                  className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_oklab,var(--accent)_14%,transparent)]"
+                  className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_oklab,var(--accent)_14%,transparent)]"
                 >
                   <Check size={14} color="var(--accent)" strokeWidth={3} />
                 </motion.span>
@@ -158,13 +173,14 @@ export default function Paywall() {
           </ul>
         </Bloque>
 
-        <Bloque className="mt-6 flex flex-col gap-3">
+        <Bloque className="mt-5">
+          <div role="radiogroup" aria-label="Elige tu plan" className="flex flex-col gap-3">
           <PlanCard
             nombre="Anual"
-            badge="MÁS POPULAR"
+            badge="MEJOR PRECIO"
             precioMesNumero={2.92}
-            totalAnual="Se cobra $34.99/año el Día 7 · 5 meses gratis"
-            precioDia="Menos de $0.10 al día"
+            totalAnual="Se cobra US$34.99/año el Día 7 · 5 meses gratis"
+            precioDia="Menos de US$0.10 al día"
             seleccionado={plan === 'anual'}
             onClick={() => setPlan('anual')}
           />
@@ -172,13 +188,14 @@ export default function Paywall() {
             nombre="Mensual"
             precioMesNumero={4.99}
             totalAnual="Primer cobro el Día 7"
-            precioDia="$0.17 al día"
+            precioDia="US$0.17 al día"
             seleccionado={plan === 'mensual'}
             onClick={() => setPlan('mensual')}
           />
+          </div>
         </Bloque>
 
-        <Bloque className="mt-6">
+        <Bloque className="mt-4">
           <BotonPrimario onClick={continuar} disabled={enviando}>
             {enviando ? 'Un momento…' : 'Empezar mis 7 días gratis'}
           </BotonPrimario>
@@ -188,33 +205,26 @@ export default function Paywall() {
             </p>
           )}
           <p className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
-            Hoy no pagas nada · te avisamos antes del cobro
+            Hoy no pagas nada · cancela cuando quieras<br />Pago seguro con Hotmart
           </p>
-          <p className="text-center text-[12px] font-semibold text-[var(--text-secondary)]">
-            Cancela cuando quieras, sin preguntas ni letra chica
-          </p>
-          <div className="mt-3 flex items-center justify-center gap-4 text-[12px] text-[var(--text-secondary)]">
+          <div className="mt-2 flex flex-wrap items-center justify-center text-[12px] text-[var(--text-secondary)]">
             <motion.button
               type="button"
               onClick={ahoraNo}
               whileTap={reduce ? undefined : { scale: 0.95 }}
-              className="font-semibold underline"
+              className="flex min-h-11 items-center px-3 font-semibold underline"
             >
-              Ahora no
+              Ahora no: seguir gratis con 3 hábitos
             </motion.button>
-            <span aria-hidden="true">·</span>
             <motion.button
               type="button"
               onClick={() => router.push('/onboarding?editar=1')}
               whileTap={reduce ? undefined : { scale: 0.95 }}
-              className="font-normal text-[var(--text-tertiary)]"
+              className="flex min-h-11 items-center px-3 font-normal text-[var(--text-secondary)]"
             >
               Editar mis respuestas
             </motion.button>
           </div>
-          <p className="mt-4 text-center text-[12px] text-[var(--text-tertiary)]">
-            Pago seguro procesado por Hotmart
-          </p>
         </Bloque>
       </motion.div>
     </FunnelShell>
@@ -242,15 +252,14 @@ function Bloque({
   );
 }
 
-function usarConteo(valor: number, activo: boolean) {
+// Conteo animado del precio al seleccionar un plan; sin animación (o plan no seleccionado) muestra el valor directo.
+function useConteoPrecio(valor: number, activo: boolean) {
   const reduce = useReducedMotion();
-  const [n, setN] = useState(reduce || !activo ? valor : 0);
+  const animar = !reduce && activo;
+  const [n, setN] = useState(0);
 
   useEffect(() => {
-    if (reduce || !activo) {
-      setN(valor);
-      return;
-    }
+    if (!animar) return;
     let frame: number;
     const inicio = performance.now();
     const duracion = 600;
@@ -261,9 +270,9 @@ function usarConteo(valor: number, activo: boolean) {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [valor, activo, reduce]);
+  }, [valor, animar]);
 
-  return n;
+  return animar ? n : valor;
 }
 
 function PlanCard({
@@ -284,10 +293,12 @@ function PlanCard({
   onClick: () => void;
 }) {
   const reduce = useReducedMotion();
-  const precioMostrado = usarConteo(precioMesNumero, seleccionado);
+  const precioMostrado = useConteoPrecio(precioMesNumero, seleccionado);
   return (
     <motion.button
       type="button"
+      role="radio"
+      aria-checked={seleccionado}
       onClick={onClick}
       whileTap={reduce ? undefined : { scale: 0.98 }}
       className="relative w-full rounded-[var(--radius-card)] border-2 border-transparent p-4 text-left transition-[background,border-color] duration-200 ease-out"
@@ -319,9 +330,9 @@ function PlanCard({
           )}
         </span>
         <span
-          className={`text-[16px] font-bold tabular-nums ${seleccionado ? 'text-[var(--accent)]' : ''}`}
+          className={`text-[24px] font-bold leading-none tabular-nums [font-family:var(--font-display)] ${seleccionado ? 'text-[var(--accent)]' : ''}`}
         >
-          ${precioMostrado.toFixed(2)}
+          US${precioMostrado.toFixed(2)}
           <span className="text-[12px] font-semibold text-[var(--text-secondary)]">/mes</span>
         </span>
       </div>

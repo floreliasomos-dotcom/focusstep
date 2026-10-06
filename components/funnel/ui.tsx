@@ -36,7 +36,7 @@ export function Mascota({ size = 64, contenta = false }: { size?: number; conten
 
 export function FunnelShell({ children }: { children: ReactNode }) {
   return (
-    <div
+    <main
       className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-4 pb-8 pt-4 text-[var(--text-primary)] [font-family:var(--font-body)]"
       style={{ background: 'var(--bg)' }}
     >
@@ -45,12 +45,12 @@ export function FunnelShell({ children }: { children: ReactNode }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            'radial-gradient(720px 460px at 50% -10%, color-mix(in oklab, var(--accent) 26%, transparent) 0%, transparent 62%), ' +
-            'radial-gradient(600px 420px at 100% 105%, color-mix(in oklab, var(--accent-2) 24%, transparent) 0%, transparent 58%)',
+            'radial-gradient(720px 460px at 50% -10%, color-mix(in oklab, var(--accent) 60%, transparent) 0%, transparent 62%), ' +
+            'radial-gradient(600px 420px at 100% 105%, color-mix(in oklab, var(--accent-2) 50%, transparent) 0%, transparent 58%)',
         }}
       />
       {children}
-    </div>
+    </main>
   );
 }
 
@@ -104,7 +104,7 @@ export function BarraProgreso({
         )}
       </div>
       {pasoActual && totalPasos && (
-        <p aria-live="polite" className="text-[12px] font-semibold text-[var(--text-secondary)]">
+        <p aria-live="polite" className="text-center text-[12px] font-semibold text-[var(--text-secondary)]">
           Pregunta {pasoActual} de {totalPasos}
         </p>
       )}
@@ -148,7 +148,7 @@ export function Chip({
           <Icon size={18} color="var(--accent)" />
         </span>
       )}
-      <span className="flex-1 text-balance">{label}</span>
+      <span className="min-w-0 flex-1 text-balance">{label}</span>
       {seleccionado && (
         <motion.span
           initial={{ scale: reduce ? 1 : 0.5, opacity: 0 }}

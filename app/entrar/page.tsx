@@ -2,12 +2,14 @@
 
 // Login de FocusStep — 50-DISENO-ONBOARDING-PAYWALL.md §E. Magic link como método primario
 // (sin contraseñas, decisión Hotmart-first de 26-AUTH-MODERNO.md). El envío real (Resend +
-// Supabase Auth) se conecta en Sesión 6 — aquí el estado ENVIANDO/ENVIADO/ERROR es una
+// Supabase Auth, y el botón "Continuar con Google") se conectan en Sesión 6 — el botón de Google se
+// quitó hasta entonces para no dejar un control tocable sin acción. Aquí el estado ENVIANDO/ENVIADO/ERROR es una
 // simulación honesta en el navegador (mock, ver C3ter del 50), nunca un envío real todavía.
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'motion/react';
-import { Mail } from 'lucide-react';
+import { Mail, AlertCircle } from 'lucide-react';
 import { BotonPrimario, FunnelShell } from '@/components/funnel/ui';
 
 type Estado = 'idle' | 'enviando' | 'enviado' | 'error';
@@ -42,10 +44,10 @@ export default function Entrar() {
   return (
     <FunnelShell>
       <div className="flex flex-1 flex-col justify-center gap-8 py-10">
-        <a href="/" className="flex items-center gap-2 self-start text-[16px] font-semibold">
+        <Link href="/" className="flex items-center gap-2 self-start text-[16px] font-semibold">
           <span aria-hidden="true" className="size-6 rounded-[8px] bg-[var(--accent)]" />
           FocusStep
-        </a>
+        </Link>
 
         {estado !== 'enviado' ? (
           <motion.div
@@ -74,28 +76,19 @@ export default function Entrar() {
                 aria-invalid={estado === 'error'}
                 className={`h-14 w-full rounded-[var(--radius-card)] border bg-[var(--surface)] px-4 text-[16px] outline-none focus:border-[var(--accent)] ${
                   estado === 'error'
-                    ? 'border-[var(--accent)]'
+                    ? 'border-[var(--error)]'
                     : 'border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)]'
                 }`}
               />
               {estado === 'error' && (
-                <p aria-live="polite" className="text-[12px] font-semibold text-[var(--accent)]">
-                  Ese correo no se ve completo — revísalo e intenta de nuevo.
+                <p aria-live="polite" className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+                  <AlertCircle size={14} /> Ese correo no se ve completo — revísalo e intenta de nuevo.
                 </p>
               )}
               <BotonPrimario type="submit" disabled={estado === 'enviando'}>
                 {estado === 'enviando' ? 'Enviando…' : 'Enviarme mi enlace de acceso'}
               </BotonPrimario>
             </form>
-
-            <button
-              type="button"
-              className="mt-3 flex h-14 w-full items-center justify-center gap-3 rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)] bg-[var(--surface)] text-[16px] font-semibold"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/google-g.svg" alt="" width={18} height={18} aria-hidden="true" />
-              Continuar con Google
-            </button>
 
             <p className="mt-4 text-center text-[12px] text-[var(--text-tertiary)]">
               Sin contraseñas: te llegará un enlace de un solo uso

@@ -74,6 +74,11 @@
 - Acento #BD5227 con texto blanco encima (botones): 4.8:1 → pasa (mínimo 4.5:1)
 - Acento vs fondo (uso como ícono/dato, umbral UI 3:1): 4.3:1 → pasa sobrado
 
+## Colores de etiqueta por hábito (auditoría 2026-10)
+- La paleta de etiquetas pasó de ámbar/menta/terracota a ámbar `#F2A65A` / coral `#E8795A` / malva `#B98AA8`:
+  el menta es EXCLUSIVAMENTE "hecho" y no puede ser también un color de hábito (ambigüedad detectada en la auditoría).
+  Hábitos ya guardados con menta siguen funcionando.
+
 ## Cambios pedidos por el usuario (2026-10)
 - Íconos-azulejo de colores (estilo "Popular Sessions") probados en el cuestionario y DESCARTADOS por
   el usuario tras 4 rondas de revisión (35→34→33→30/40): las opciones vuelven al círculo terracota

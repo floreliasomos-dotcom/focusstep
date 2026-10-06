@@ -26,6 +26,8 @@ import {
   AlertCircle,
   BellOff,
 } from 'lucide-react';
+import { useHidratado } from '@/lib/hidratado';
+import { registrarEvento } from '@/lib/analitica';
 import { BarraProgreso, BotonPrimario, Chip, FunnelShell, Mascota, PasoTransicion } from '@/components/funnel/ui';
 
 const PREGUNTAS = [
@@ -81,36 +83,47 @@ const HABITO_SUGERIDO: Record<string, string> = {
 
 type Respuestas = Record<string, string>;
 
+type EstadoInicial = { respuestas: Respuestas; paso: number; modoEdicion: boolean; textoLibre: string };
+
+// "Editar mis respuestas" desde el paywall vuelve aquí (?editar=1) y también se retoma tras salir con
+// la X: se restaura lo ya contestado y se arranca en la primera pregunta sin responder. En modo
+// edición, al terminar la última pregunta se vuelve directo al paywall (sin repetir pantallas).
+function leerInicial(): EstadoInicial {
+  const vacio: EstadoInicial = { respuestas: {}, paso: 0, modoEdicion: false, textoLibre: '' };
+  try {
+    const modoEdicion = new URLSearchParams(window.location.search).get('editar') === '1';
+    const raw = sessionStorage.getItem('focusstep_onboarding');
+    if (!raw) return { ...vacio, modoEdicion };
+    const guardadas = JSON.parse(raw) as Respuestas;
+    const siguiente = PREGUNTAS.findIndex((p) => !guardadas[p.id]);
+    const conocidas = PREGUNTAS[2].opciones.map((o) => o.label as string);
+    const f = guardadas.fracasos ?? '';
+    return {
+      respuestas: guardadas,
+      paso: siguiente === -1 ? 0 : siguiente,
+      modoEdicion,
+      textoLibre: f && !conocidas.includes(f) ? f : '',
+    };
+  } catch {
+    return vacio; // sin respuestas previas: arranca en blanco
+  }
+}
+
 // 0..3 = preguntas · 4 = reconocimiento · 5 = primera victoria · 6 = loading
 export default function Onboarding() {
-  const router = useRouter();
-  const [paso, setPaso] = useState(0);
-  const [respuestas, setRespuestas] = useState<Respuestas>({});
-  const [otraCosa, setOtraCosa] = useState('');
-  const [victoriaCompleta, setVictoriaCompleta] = useState(false);
-  const [modoEdicion, setModoEdicion] = useState(false);
+  const hidratado = useHidratado();
+  if (!hidratado) return <FunnelShell><div className="flex-1" /></FunnelShell>;
+  return <Cuestionario />;
+}
 
-  // "Editar mis respuestas" desde el paywall vuelve aquí — restaurar lo ya contestado para
-  // que la persona ajuste desde donde quedó, en vez de perder su progreso (bug real detectado
-  // por el revisor-visual: antes esto arrancaba siempre en blanco). Si llega con ?editar=1
-  // (ya completó el recorrido antes), al terminar la última pregunta vuelve directo al paywall
-  // sin repetir reconocimiento/primera victoria/loading — evita forzar 3 pantallas de más solo
-  // para cambiar 1 respuesta (segundo defecto real detectado por el revisor-visual).
-  useEffect(() => {
-    try {
-      setModoEdicion(new URLSearchParams(window.location.search).get('editar') === '1');
-      const raw = sessionStorage.getItem('focusstep_onboarding');
-      if (raw) {
-        const guardadas = JSON.parse(raw) as Respuestas;
-        setRespuestas(guardadas);
-        const siguiente = PREGUNTAS.findIndex((p) => !guardadas[p.id]);
-        setPaso(siguiente === -1 ? 0 : siguiente);
-      }
-    } catch {
-      /* sin respuestas previas — arranca en blanco, comportamiento normal */
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+function Cuestionario() {
+  const router = useRouter();
+  const [inicial] = useState(leerInicial);
+  const [paso, setPaso] = useState(inicial.paso);
+  const [respuestas, setRespuestas] = useState<Respuestas>(inicial.respuestas);
+  const [otraCosa, setOtraCosa] = useState(inicial.textoLibre);
+  const [victoriaCompleta, setVictoriaCompleta] = useState(false);
+  const modoEdicion = inicial.modoEdicion;
 
   const totalPasos = PREGUNTAS.length + 3; // + reconocimiento + victoria + loading
   const pct = Math.min(8 + (paso / totalPasos) * 92, 100);
@@ -149,6 +162,7 @@ export default function Onboarding() {
   useEffect(() => {
     if (paso === 6) {
       sessionStorage.setItem('focusstep_onboarding', JSON.stringify(respuestas));
+      registrarEvento('onboarding_completado');
       const t = setTimeout(() => router.push('/paywall'), 4800);
       return () => clearTimeout(t);
     }
@@ -175,7 +189,6 @@ export default function Onboarding() {
               otraCosa={otraCosa}
               onOtraCosa={setOtraCosa}
               onElegir={(v, conTeclado) => elegir(PREGUNTAS[paso].id, v, conTeclado)}
-              esUltima={paso === PREGUNTAS.length - 1}
             />
           </PasoTransicion>
         )}
@@ -216,17 +229,17 @@ function PantallaPregunta({
   otraCosa,
   onOtraCosa,
   onElegir,
-  esUltima,
 }: {
   pregunta: (typeof PREGUNTAS)[number];
   seleccionado?: string;
   otraCosa: string;
   onOtraCosa: (v: string) => void;
   onElegir: (v: string, conTeclado?: boolean) => void;
-  esUltima: boolean;
 }) {
   const reduceMov = useReducedMotion();
-  const [mostrarInput, setMostrarInput] = useState(false);
+  const [mostrarInput, setMostrarInput] = useState(
+    () => Boolean(seleccionado) && pregunta.opciones.some((op) => 'escape' in op && op.escape) && !pregunta.opciones.some((op) => op.label === seleccionado),
+  );
   const [intentoVacio, setIntentoVacio] = useState(false);
   const campoRef = useRef<HTMLInputElement>(null);
   const accionRef = useRef<HTMLDivElement>(null);
@@ -265,17 +278,6 @@ function PantallaPregunta({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pregunta]);
 
-  // Si ya había una respuesta de texto libre guardada (volver atrás / retomar), se reabre el campo
-  // con lo escrito en vez de perderlo.
-  useEffect(() => {
-    const tieneEscape = pregunta.opciones.some((op) => 'escape' in op && op.escape);
-    if (tieneEscape && seleccionado && !pregunta.opciones.some((op) => op.label === seleccionado)) {
-      setMostrarInput(true);
-      onOtraCosa(seleccionado);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <div className="flex flex-1 flex-col pt-6">
       <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
@@ -287,7 +289,7 @@ function PantallaPregunta({
           animate={seleccionado && !reduceMov ? { scale: [1, 1.25, 1] } : { scale: 1 }}
           transition={{ duration: 0.35 }}
         >
-          <Mascota size={44} contenta={Boolean(seleccionado)} />
+          <Mascota size={56} contenta={Boolean(seleccionado)} />
         </motion.div>
         <p className="text-[16px] leading-snug text-[var(--text-secondary)]">
           {pregunta.ayuda}
@@ -340,11 +342,11 @@ function PantallaPregunta({
           </BotonPrimario>
         </div>
       )}
-      <p className="mt-6 text-center text-[12px] text-[var(--text-tertiary)]">
+      <p className="mt-auto pt-6 text-center text-[12px] text-[var(--text-tertiary)]">
         Tu avance se guarda solo
         <span className="hidden [@media(pointer:fine)]:inline">
           {' '}
-          · Tip: teclas 1-{pregunta.opciones.length}
+          · Atajo: teclas 1-{pregunta.opciones.length}
         </span>
       </p>
     </div>

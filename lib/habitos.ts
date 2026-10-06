@@ -4,6 +4,8 @@
 // directo, siempre pasa por `marcarHechoHoy()` — el equivalente local de la RPC
 // `marcar_habito_hecho` que hará el servidor.
 
+import { CLAVE_EVENTOS_LOCAL } from './analitica';
+
 export type MomentoDia = 'Mis mañanas' | 'Mi trabajo' | 'Mi descanso';
 
 export interface Habito {
@@ -32,6 +34,9 @@ const CLAVE_HABITOS = 'focusstep_habitos';
 const CLAVE_REGISTROS = 'focusstep_registros';
 const CLAVE_PERFIL = 'focusstep_perfil';
 const CLAVE_DESHACER = 'focusstep_deshacer';
+const CLAVE_VERSION = 'focusstep_version';
+// Versión del formato de los datos locales: si cambia su forma, aquí se migra en vez de romper lo guardado.
+const VERSION_DATOS = 1;
 
 interface Deshacer {
   habitoId: string;
@@ -39,7 +44,8 @@ interface Deshacer {
   perfilAnterior: Perfil;
 }
 
-const PALETA_TAGS = ['#F2A65A', '#45BF9A', '#BD5227'] as const; // ámbar, menta, terracota — FICHA-ARTE.md
+// Colores de etiqueta por hábito: cálidos y SIN verde menta (el menta es exclusivamente "hecho", FICHA-ARTE.md).
+const PALETA_TAGS = ['#F2A65A', '#E8795A', '#B98AA8'] as const; // ámbar, coral, malva
 
 const HABITO_SUGERIDO: Record<MomentoDia, string> = {
   'Mis mañanas': 'Estirar 5 minutos al despertar',
@@ -95,10 +101,18 @@ export function obtenerPerfil(): Perfil {
   });
 }
 
+function migrarDatos() {
+  const guardada = leer<number | null>(CLAVE_VERSION, null);
+  if (guardada === VERSION_DATOS) return;
+  // v0 → v1: sin cambios de forma; solo se marca la versión. Futuras migraciones van aquí, en orden.
+  escribir(CLAVE_VERSION, VERSION_DATOS);
+}
+
 // Migra la respuesta del onboarding (sessionStorage) a un hábito real la primera vez que se
 // abre la app interna. Si no hay respuestas de onboarding ni hábitos guardados, siembra un
 // hábito de ejemplo — la app nunca se enseña vacía (32-DEL-MVP-AL-PRODUCTO.md).
 export function inicializarDatos(): Habito[] {
+  migrarDatos();
   const existentes = obtenerHabitos();
   if (existentes.length > 0) return existentes;
 
@@ -181,6 +195,11 @@ export function marcarHechoHoy(habitoId: string): { perfil: Perfil; perfilAnteri
     }
   }
 
+  // Pase libre GANADO (no regalado): uno por cada 7 días seguidos, con tope de 2 guardados (24-GAMIFICACION).
+  if (nuevaRacha > 0 && nuevaRacha % 7 === 0 && nuevaRacha !== p.rachaActual) {
+    congeladores = Math.min(2, congeladores + 1);
+  }
+
   const perfil: Perfil = { ...p, rachaActual: nuevaRacha, congeladores, ultimaActividadOn: hoy };
   const guardadoPerfil = escribir(CLAVE_PERFIL, perfil);
   escribir(CLAVE_DESHACER, { habitoId, fecha: hoy, perfilAnterior } satisfies Deshacer);
@@ -248,8 +267,8 @@ export function semanaDeHoy(habitoId: string): { dias: DiaSemana[]; completados:
 export const LIMITE_GRATIS = 3;
 export const COLORES_HABITO = [
   { valor: PALETA_TAGS[0], nombre: 'Ámbar' },
-  { valor: PALETA_TAGS[1], nombre: 'Menta' },
-  { valor: PALETA_TAGS[2], nombre: 'Terracota' },
+  { valor: PALETA_TAGS[1], nombre: 'Coral' },
+  { valor: PALETA_TAGS[2], nombre: 'Malva' },
 ] as const;
 
 export function esPro(): boolean {
@@ -357,4 +376,56 @@ export function historialSemanas(cantidad = 8): { semanas: SemanaHistorial[]; to
   }
   const mejorSemana = Math.max(0, ...Array.from(porSemana.values()));
   return { semanas, totalDias: fechas.size, mejorSemana };
+}
+
+// ───────────────────────── Datos de la persona (pantalla /perfil) ─────────────────────────
+// Derechos de privacidad prometidos en /privacidad, ejecutables hoy sobre los datos locales.
+
+export function exportarDatos() {
+  return {
+    exportadoEn: new Date().toISOString(),
+    version: VERSION_DATOS,
+    habitos: obtenerHabitos(),
+    registros: obtenerRegistros(),
+    perfil: obtenerPerfil(),
+  };
+}
+
+export function borrarTodosLosDatos(): void {
+  try {
+    [CLAVE_HABITOS, CLAVE_REGISTROS, CLAVE_PERFIL, CLAVE_DESHACER, CLAVE_VERSION, CLAVE_REINICIO_VISTO, CLAVE_EVENTOS_LOCAL].forEach((c) => localStorage.removeItem(c));
+    ['focusstep_onboarding', 'focusstep_plan_elegido'].forEach((c) => sessionStorage.removeItem(c));
+  } catch {
+    /* almacenamiento no disponible: no hay nada que borrar */
+  }
+}
+
+export function planActualEtiqueta(): { etiqueta: string; esDePago: boolean } {
+  try {
+    const plan = sessionStorage.getItem('focusstep_plan_elegido');
+    if (plan === 'anual') return { etiqueta: 'Prueba de 7 días · plan anual', esDePago: true };
+    if (plan === 'mensual') return { etiqueta: 'Prueba de 7 días · plan mensual', esDePago: true };
+  } catch {
+    /* sin sessionStorage: se trata como plan gratis */
+  }
+  return { etiqueta: 'Plan gratis', esDePago: false };
+}
+
+// ───────────────────────── Reinicio Amigable ─────────────────────────
+// Tras 3+ días sin dar un paso, /hoy recibe a la persona con una bienvenida sin culpa (momento M6 de
+// 56-MOMENTOS-EMOCIONALES.md): nada en rojo, nada que "reiniciar". Se muestra una vez por día de regreso.
+
+const CLAVE_REINICIO_VISTO = 'focusstep_reinicio_visto';
+export const DIAS_PARA_REINICIO = 3;
+
+export function necesitaReinicioAmigable(): boolean {
+  const p = obtenerPerfil();
+  if (p.ultimaActividadOn === null) return false;
+  const hoy = hoyLocal();
+  if (leer<string | null>(CLAVE_REINICIO_VISTO, null) === hoy) return false;
+  return diferenciaDias(p.ultimaActividadOn, hoy) >= DIAS_PARA_REINICIO;
+}
+
+export function marcarReinicioVisto(): void {
+  escribir(CLAVE_REINICIO_VISTO, hoyLocal());
 }

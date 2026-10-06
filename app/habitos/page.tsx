@@ -4,11 +4,12 @@
 // Pantalla secundaria (no una de las 4 del dinero): medición + checklist, sin revisor completo.
 // Datos reales sobre lib/habitos.ts (localStorage); Sesión 6 los conecta a Supabase.
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Pencil, Target, Archive, ArchiveRestore, Plus, Lock, AlertCircle } from 'lucide-react';
 import { AppShell } from '@/components/app/AppShell';
+import { useHidratado } from '@/lib/hidratado';
 import { FormularioHabito, type DatosHabito } from '@/components/app/FormularioHabito';
 import { BotonPrimario, Mascota } from '@/components/funnel/ui';
 import {
@@ -38,17 +39,27 @@ const MENSAJE_ERROR: Record<'limite' | 'guardado' | 'nombre', string> = {
   nombre: 'Escribe al menos 2 letras.',
 };
 
+function EsqueletoHabitos() {
+  return (
+    <AppShell>
+      <div className="h-8 w-40 animate-pulse rounded-full bg-[color-mix(in_oklab,var(--text-secondary)_14%,transparent)]" />
+      <div className="mt-4 h-28 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
+      <div className="mt-3 h-28 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
+    </AppShell>
+  );
+}
+
 export default function Habitos() {
+  // Espera a estar hidratado y monta el contenido ya con los datos de localStorage (sin setState en efectos).
+  return useHidratado() ? <HabitosContenido /> : <EsqueletoHabitos />;
+}
+
+function HabitosContenido() {
   const reduce = useReducedMotion();
-  const [habitos, setHabitos] = useState<Habito[] | null>(null);
-  const [pro, setPro] = useState(false);
+  const [habitos, setHabitos] = useState<Habito[]>(inicializarDatos);
+  const pro = esPro();
   const [modo, setModo] = useState<{ tipo: 'nuevo' } | { tipo: 'editar'; id: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setHabitos(inicializarDatos());
-    setPro(esPro());
-  }, []);
 
   function aplicar(r: ResultadoHabito, alExito?: () => void) {
     if (r.ok) {
@@ -60,16 +71,6 @@ export default function Habitos() {
     }
   }
 
-  if (habitos === null) {
-    return (
-      <AppShell>
-        <div className="h-8 w-40 animate-pulse rounded-full bg-[color-mix(in_oklab,var(--text-secondary)_14%,transparent)]" />
-        <div className="mt-4 h-28 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
-        <div className="mt-3 h-28 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
-      </AppShell>
-    );
-  }
-
   const activos = contarActivos(habitos);
   const hayCupo = puedeActivarOtro(habitos);
   const primerActivo = habitos.find((h) => h.activo)?.id;
@@ -79,7 +80,9 @@ export default function Habitos() {
     <AppShell>
       <h1 className="text-[24px] font-bold leading-[1.15] [font-family:var(--font-display)]">Tus hábitos</h1>
       <p className="mt-1 text-[12px] font-bold text-[var(--text-secondary)]">
-        {pro ? `${activos} activos · sin límite` : `${activos} de ${LIMITE_GRATIS} activos`}
+        {pro
+          ? `${activos} ${activos === 1 ? 'activo' : 'activos'} · sin límite`
+          : `${activos} de ${LIMITE_GRATIS} activos`}
       </p>
 
       {error && !modo && (

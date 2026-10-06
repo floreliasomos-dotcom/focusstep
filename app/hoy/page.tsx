@@ -11,6 +11,8 @@ import Link from 'next/link';
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
 import { Sparkles, Check, Undo2, Snowflake, ChevronRight, AlertCircle } from 'lucide-react';
 import { AppShell } from '@/components/app/AppShell';
+import { useHidratado } from '@/lib/hidratado';
+import { registrarEvento } from '@/lib/analitica';
 import { BotonPrimario, Mascota } from '@/components/funnel/ui';
 import {
   type Habito,
@@ -19,6 +21,8 @@ import {
   inicializarDatos,
   obtenerPerfil,
   obtenerDeshacerDisponible,
+  necesitaReinicioAmigable,
+  marcarReinicioVisto,
   yaCompletadoHoy,
   marcarHechoHoy,
   desmarcarHechoHoy,
@@ -48,14 +52,11 @@ function fraseDelDia(fecha: string): string {
   return FRASES_MASCOTA[hash % FRASES_MASCOTA.length];
 }
 
-// Conteo animado (mismo patrón que el paywall) — respeta prefers-reduced-motion.
+// Conteo animado (mismo patrón que el paywall) — con prefers-reduced-motion devuelve el valor directo.
 function useConteo(valor: number, reduce: boolean | null): number {
-  const [n, setN] = useState(reduce ? valor : 0);
+  const [n, setN] = useState(0);
   useEffect(() => {
-    if (reduce) {
-      setN(valor);
-      return;
-    }
+    if (reduce) return;
     let frame: number;
     const inicio = performance.now();
     const duracion = 500;
@@ -66,43 +67,58 @@ function useConteo(valor: number, reduce: boolean | null): number {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valor, reduce]);
-  return n;
+  return reduce ? valor : n;
+}
+
+function leerHoy() {
+  const actual = inicializarDatos().find((h) => h.activo) ?? null;
+  const perfil = obtenerPerfil();
+  const hechoHoy = actual ? yaCompletadoHoy(actual.id) : false;
+  return {
+    habito: actual as Habito | null,
+    completado: hechoHoy,
+    semana: actual ? semanaDeHoy(actual.id) : { dias: [] as DiaSemana[], completados: 0 },
+    congeladores: perfil.congeladores,
+    racha: perfil.rachaActual,
+    reinicio: actual ? necesitaReinicioAmigable() : false,
+    // El deshacer solo se ofrece si sigue disponible su snapshot de hoy (persistido, sobrevive al remontar).
+    perfilAnterior: actual && hechoHoy ? obtenerDeshacerDisponible(actual.id) : null,
+  };
+}
+
+function EsqueletoHoy() {
+  return (
+    <AppShell>
+      <div className="h-6 w-40 animate-pulse rounded-full bg-[color-mix(in_oklab,var(--text-secondary)_14%,transparent)]" />
+      <div className="mt-4 h-40 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
+    </AppShell>
+  );
 }
 
 export default function Hoy() {
-  const reduce = useReducedMotion();
-  const [habito, setHabito] = useState<Habito | null | undefined>(undefined);
-  const [completado, setCompletado] = useState(false);
-  const [semana, setSemana] = useState<{ dias: DiaSemana[]; completados: number }>({ dias: [], completados: 0 });
-  const [modoDificil, setModoDificil] = useState(false);
-  const [perfilAnterior, setPerfilAnterior] = useState<Perfil | null>(null);
-  const [congeladores, setCongeladores] = useState(0);
-  const [racha, setRacha] = useState(0);
-  const [errorGuardado, setErrorGuardado] = useState(false);
+  // Espera a estar hidratado (esqueleto con TabBar, nunca pantalla en blanco) y entonces monta el
+  // contenido ya con sus datos de localStorage — sin setState dentro de un efecto.
+  return useHidratado() ? <HoyContenido /> : <EsqueletoHoy />;
+}
 
-  useEffect(() => {
-    const habitos = inicializarDatos();
-    const actual = habitos.find((h) => h.activo) ?? null;
-    setHabito(actual);
-    const perfil = obtenerPerfil();
-    setCongeladores(perfil.congeladores);
-    setRacha(perfil.rachaActual);
-    if (actual) {
-      const hechoHoy = yaCompletadoHoy(actual.id);
-      setCompletado(hechoHoy);
-      setSemana(semanaDeHoy(actual.id));
-      // El deshacer solo puede ofrecerse si sigue disponible su snapshot de hoy — vivir solo
-      // en useState se perdía al remontar (volver de otra pestaña), dejando el botón visible
-      // pero sin efecto (bug real detectado por el revisor-visual).
-      if (hechoHoy) setPerfilAnterior(obtenerDeshacerDisponible(actual.id));
-    }
-  }, []);
+function HoyContenido() {
+  const reduce = useReducedMotion();
+  const [ini] = useState(leerHoy);
+  const habito = ini.habito;
+  const [completado, setCompletado] = useState(ini.completado);
+  const [semana, setSemana] = useState<{ dias: DiaSemana[]; completados: number }>(ini.semana);
+  const [modoDificil, setModoDificil] = useState(false);
+  const [perfilAnterior, setPerfilAnterior] = useState<Perfil | null>(ini.perfilAnterior);
+  const [congeladores, setCongeladores] = useState(ini.congeladores);
+  const [racha, setRacha] = useState(ini.racha);
+  const [errorGuardado, setErrorGuardado] = useState(false);
+  const [reinicio, setReinicio] = useState(ini.reinicio);
 
   function completar() {
     if (!habito || completado) return;
-    const { perfil, perfilAnterior: anterior, guardado } = marcarHechoHoy(habito.id);
+    const { perfil, perfilAnterior: anterior, guardado, yaEstaba } = marcarHechoHoy(habito.id);
+    if (guardado && !yaEstaba) registrarEvento('habito_completado', { racha: perfil.rachaActual });
     if (!guardado) {
       setErrorGuardado(true);
       return;
@@ -128,13 +144,17 @@ export default function Hoy() {
   const completadosMostrados = useConteo(semana.completados, reduce);
   const circunferencia = 2 * Math.PI * 18;
 
-  if (habito === undefined) {
-    // Primer render, antes de leer localStorage — un esqueleto real dentro del mismo shell
-    // (con TabBar), nunca una pantalla en blanco (defecto real detectado por el revisor-visual).
+  if (reinicio && habito) {
     return (
       <AppShell>
-        <div className="h-6 w-40 animate-pulse rounded-full bg-[color-mix(in_oklab,var(--text-secondary)_14%,transparent)]" />
-        <div className="mt-4 h-40 animate-pulse rounded-[var(--radius-card)] bg-[color-mix(in_oklab,var(--text-secondary)_10%,transparent)]" />
+        <ReinicioAmigable
+          habito={habito}
+          onEmpezar={() => {
+            marcarReinicioVisto();
+            registrarEvento('reinicio_amigable_aceptado');
+            setReinicio(false);
+          }}
+        />
       </AppShell>
     );
   }
@@ -340,5 +360,35 @@ export default function Hoy() {
         </>
       )}
     </AppShell>
+  );
+}
+
+// Bienvenida tras 3+ días sin entrar (Reinicio Amigable, el dispositivo ownable de la marca): la mascota
+// saluda con un gesto propio, y NADA habla de racha perdida ni historial en rojo.
+function ReinicioAmigable({ habito, onEmpezar }: { habito: Habito; onEmpezar: () => void }) {
+  const reduce = useReducedMotion();
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
+      <motion.div
+        animate={reduce ? undefined : { rotate: [0, -14, 12, -8, 6, 0] }}
+        transition={{ duration: 1.4, delay: 0.3, ease: 'easeInOut' }}
+        style={{ transformOrigin: '50% 90%' }}
+      >
+        <Mascota size={80} />
+      </motion.div>
+      <h1 className="max-w-[18ch] text-balance text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">
+        ¿Lista para retomar hoy con 1 solo paso?
+      </h1>
+      <p className="max-w-[30ch] text-[16px] text-[var(--text-secondary)]">
+        No pasa nada por los días que faltaste: no hay historial en rojo ni nada que reiniciar. Solo hoy.
+      </p>
+      <div className="w-full rounded-[var(--radius-card)] bg-[var(--surface)] p-4 shadow-[0_4px_12px_-4px_color-mix(in_oklab,var(--accent)_30%,transparent)]">
+        <p className="text-[12px] font-bold text-[var(--text-secondary)]">Tu único paso de hoy</p>
+        <p className="mt-1 text-[24px] font-bold leading-[1.2] [font-family:var(--font-display)]">{habito.nombre}</p>
+      </div>
+      <div className="w-full">
+        <BotonPrimario onClick={onEmpezar}>Empezar de nuevo</BotonPrimario>
+      </div>
+    </div>
   );
 }

@@ -1,14 +1,9 @@
 # VEREDICTO revisor-visual — landing
-Fecha: 2026-10-04 12:00
+Fecha: 2026-10-05 15:00
 Screenshot: docs/revisiones/landing-375.png
-Usabilidad: 36/40
-Craft: 18/20
-Copy (si vende): 18/20
+Usabilidad: 32/40
+Craft: 13/20
+Copy (si vende): 17/20
 Fidelidad (si hubo referencia): N-A
-Veredicto: LISTA
-Top defectos:
-1. [Seccion Agitacion, parrafo 1] "vuelves a fojas cero" es modismo regional (mexicano) en una pagina de tuteo LATAM neutro; parte del avatar puede no entenderlo. Fix: "vuelves a empezar de cero".
-2. [Seccion Oferta, cifras $2.92 / $34.99 / $99] Sin count-up al entrar en viewport (pendiente menor ya conocido). Fix: animar con useReveal + spring.
-3. [Oferta / copy] Sin garantia nombrada ni testimonio real (aceptado por reglas del proyecto; techo de especificidad en 3/4).
-4. [Pagina completa, ~7200px] CTA principal repetido 4 veces mas sticky; todos con la misma etiqueta y destino, sin competir, pero el CTA "Elegir mensual" es un segundo tipo de accion que baja un poco el foco (h8 en 3, no 4).
-Notas de verificacion: fixes anteriores verificados en codigo. app/page.tsx lineas 71-73: una sola frase clave por parrafo, acento en "castigan tus dias dificiles", "causa" sin acento. MarkedCopy.tsx linea 105: strong con font-semibold text-[var(--text-primary)] (#3A2418 sobre cuerpo #6D5849), salto de contraste real. Enfasis ya no satura la seccion (~15% del texto). No se vieron regresiones en el resto de la pagina (screenshot leido a 360x7232 reducido; detalle tipografico confirmado en codigo, no a nivel de pixel). Paleta, Baloo 2/Nunito y radios coinciden con FICHA-ARTE. Margen del gate estrecho: usabilidad 36/40 en el umbral exacto.
+Veredicto: NO LISTA
+Top defectos: 1) Footer (landing-seccion-9): el separador "·" sigue huerfano al inicio de la 2a linea ("· Aviso de IA") y los enlaces arrancan con sangria (~24px vs 20px de margen); el logo del footer es gris-marron apagado, distinto al cuadro terracota del header; la barra sticky usa margen 16px vs 20px del contenido -> enlaces en lista vertical o con gap sin separadores, mismo logo y px-5 en la barra. 2) Identidad (eje 3 = 2): el blob/mascota solo vive dentro de las capturas; header, chips, cards, kicker y pricing son el kit estandar sin rasgo propio, y el "Completar" de las capturas usa #E2703F (acento viejo) frente al #BD5227 de la pagina -> llevar el blob a hero/CTA final como ilustracion SVG propia y regenerar capturas con el token actual. 3) Moneda inconsistente: "US$34.99/año" pero "$2.92", "$4.99", "$0.10/día" y el titular de la oferta siguen con "$" pelado (en MX/CO/CL es peso local) -> usar "US$" en todos los precios o declarar moneda una vez junto al titular. 4) Titulares: el acento cae sobre el articulo "un" en el H1 ("un solo paso"), en "un paso a la vez" (AppPorDentro y CtaFinal) -> acentuar solo "solo paso" / "paso a la vez". 5) Copy: eje especificidad/prueba = 2 por limite real (sin testimonios ni garantia con plazo; no se penaliza como invencion, pero bloquea el umbral "ningun eje <=2"); ademas "Notificaciones avanzadas por bloques" es jerga, FAQ "pierdo mi dinero" y "no me sirve" son redundantes (6 items > 5), y anual vs mensual solo difieren en "Frases de tu mascota". Verificado en codigo: whileTap 0.97, reveal con reduced-motion, CTA >=52px, sticky con safe-area; no hay conteo de numeros ni dibujado de anillos (movimiento 3). Mejoras confirmadas: carrusel sin doble bisel, "US$" en cobro anual, microcopy del hero.

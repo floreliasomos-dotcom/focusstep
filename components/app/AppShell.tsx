@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
   return (
     <div
-      className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden text-[var(--text-primary)] [font-family:var(--font-body)]"
+      className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col overflow-hidden text-[var(--text-primary)] [font-family:var(--font-body)]"
       style={{ background: 'var(--bg)' }}
     >
       <div

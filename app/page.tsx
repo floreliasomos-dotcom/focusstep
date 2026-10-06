@@ -8,7 +8,7 @@
 // Sección 7 (Garantía) queda OMITIDA a propósito — ver nota en docs/copy/landing.md §7:
 // no se puede publicar un plazo de garantía sin verificarlo antes contra Hotmart
 // (FICHA-MERCADO.md §4, pendiente de Sesión 6). En su lugar, Oferta y CtaFinal comunican
-// el mismo alivio ("7 días gratis, sin tarjeta, cancela cuando quieras") sin usar la
+// el mismo alivio ("7 días gratis, cancela cuando quieras") sin usar la
 // palabra "garantía" ni afirmar un plazo de reembolso que todavía no existe.
 
 import Image from 'next/image';
@@ -38,7 +38,7 @@ export default function Home() {
         subtitleMarked="Una sola tarea al día — [b]nunca una lista que te abruma[/b]."
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
-        socialProof={<span>Tu prueba de 7 días no pide tarjeta</span>}
+        socialProof={<span>7 días gratis · cancela cuando quieras</span>}
         visualPlaceholderSugerencia="captura de la pantalla Un Solo Foco, con el hábito de hoy y el botón Completar"
         visual={
           <div className="flex justify-center bg-[var(--surface)] py-10">
@@ -47,7 +47,7 @@ export default function Home() {
               alt="Pantalla Un Solo Foco de FocusStep: el hábito de hoy, la mascota y el botón Completar"
               width={280}
               height={607}
-              className="h-auto w-[240px] md:w-[280px]"
+              className="h-auto w-[240px] rounded-[48px] md:w-[280px]"
               priority
             />
           </div>
@@ -68,7 +68,7 @@ export default function Home() {
       {/* 3. AGITACIÓN */}
       <Agitacion
         frases={[
-          'Cada vez que abandonas un sistema, [b]vuelves a fojas cero[/b] con la confianza un poco más golpeada.',
+          'Cada vez que abandonas un sistema, [b]vuelves a empezar de cero[/b] con la confianza un poco más golpeada.',
           'Si nada cambia, en 6 meses sigues [b]empezando de nuevo cada lunes[/b] — otra vez desde cero.',
           'Más listas y más apps no resuelven la culpa: la causa es que [acento]castigan tus días difíciles[/acento].',
         ]}
@@ -114,24 +114,15 @@ export default function Home() {
       {/* 6. OFERTA — anual primero, trial en ambos planes (7 días, ESTADO.md), total visible.
           Sin lenguaje de "garantía" — ver nota de cabecera del archivo. */}
       <Oferta
-        tituloMarked="Empieza gratis. Sigue por [acento]menos de $0.10/día[/acento]"
+        tituloMarked="Empieza gratis. Sigue por [acento]menos de US$0.10/día[/acento]"
         trialDias={7}
-        stack={{
-          lineas: [
-            { resultado: 'FocusStep Pro con hábitos ilimitados (12 meses)', valor: '$60' },
-            { resultado: 'Modo Día Difícil y notificaciones avanzadas', valor: '$24' },
-            { resultado: 'Frases motivacionales diarias de tu mascota', valor: '$15' },
-          ],
-          totalTachado: '$99',
-          nota: 'Hoy: $2.92/mes (se cobra $34.99/año)',
-        }}
         anual={{
           nombre: 'Anual',
-          badge: 'MÁS POPULAR',
-          precioMes: '$2.92',
-          totalAnual: 'Se cobra $34.99/año',
+          badge: 'MEJOR PRECIO',
+          precioMes: 'US$2.92',
+          totalAnual: 'Se cobra US$34.99/año',
           ahorro: '5 meses gratis',
-          descomposicionDia: 'menos de $0.10 al día',
+          descomposicionDia: 'menos de US$0.10 al día',
           ctaLabel: 'Empezar mis 7 días gratis',
           ctaHref: CTA_HREF,
           features: [
@@ -144,8 +135,8 @@ export default function Home() {
         }}
         mensual={{
           nombre: 'Mensual',
-          precioMes: '$4.99',
-          descomposicionDia: 'menos de $0.17 al día',
+          precioMes: 'US$4.99',
+          descomposicionDia: 'menos de US$0.17 al día',
           ctaLabel: 'Elegir mensual',
           ctaHref: CTA_HREF,
           features: [
@@ -173,8 +164,8 @@ export default function Home() {
             respuestaMarked: 'No — es para cualquiera con la vida llena de pendientes. El TDAH es solo uno de los casos donde más se siente el alivio.',
           },
           {
-            pregunta: '¿Es caro / no lo voy a usar?',
-            respuestaMarked: 'Menos de $0.10 al día en el plan anual, y tus [b]7 días de prueba son gratis[/b] y sin tarjeta bloqueada.',
+            pregunta: '¿Y si no lo uso y pierdo mi dinero?',
+            respuestaMarked: 'Menos de US$0.10 al día en el plan anual, y tus [b]7 días de prueba son gratis[/b]: si no te sirve, cancelas antes del primer cobro.',
           },
           {
             pregunta: '¿Es seguro poner mi tarjeta?',
@@ -194,7 +185,7 @@ export default function Home() {
         ctaLabel={CTA_LABEL}
         ctaHref={CTA_HREF}
         recap="7 días de prueba gratis · cancela cuando quieras"
-        psMarked="PS: FocusStep te da un solo hábito a la vez y un Reinicio Amigable para los días que faltes — sin rachas que castiguen. Hoy entras gratis por 7 días, sin tarjeta bloqueada."
+        psMarked="PS: FocusStep te da un solo hábito a la vez y un Reinicio Amigable para los días que faltes — sin rachas que castiguen. Hoy entras gratis por 7 días y cancelas cuando quieras."
       />
 
       {/* 10. FOOTER LEGAL */}
