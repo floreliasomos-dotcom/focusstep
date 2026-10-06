@@ -4,15 +4,17 @@
 // (descargar y borrar mis datos), ejecutables hoy sobre los datos locales. Cerrar sesión llega con
 // la cuenta real (Sesión 6). Pantalla secundaria: medición + checklist.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Download, Trash2, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
+import { Download, Trash2, ChevronRight, AlertCircle, CreditCard, LogOut } from 'lucide-react';
 import { AppShell } from '@/components/app/AppShell';
 import { BotonPrimario, Mascota } from '@/components/funnel/ui';
 import { useHidratado } from '@/lib/hidratado';
 import { borrarTodosLosDatos, exportarDatos, planActualEtiqueta } from '@/lib/habitos';
+import { borrarDatosEnLaNube, cerrarSesion } from '@/lib/sync';
+import { crearClienteNavegador } from '@/lib/supabase/client';
 
 const LEGALES = [
   { href: '/privacidad', texto: 'Política de privacidad' },
@@ -40,6 +42,12 @@ function PerfilContenido() {
   const [plan] = useState(planActualEtiqueta);
   const [confirmando, setConfirmando] = useState(false);
   const [errorExportar, setErrorExportar] = useState(false);
+  const [errorBorrar, setErrorBorrar] = useState(false);
+  const [correo, setCorreo] = useState<string | null>(null);
+
+  useEffect(() => {
+    crearClienteNavegador().auth.getUser().then(({ data }) => setCorreo(data.user?.email ?? null));
+  }, []);
 
   function descargar() {
     try {
@@ -56,8 +64,21 @@ function PerfilContenido() {
     }
   }
 
-  function borrar() {
+  async function borrar() {
+    // Primero la nube: si falla, NO se borra lo local (así no se pierde nada a medias) y se avisa.
+    const ok = await borrarDatosEnLaNube();
+    if (!ok) {
+      setErrorBorrar(true);
+      return;
+    }
     borrarTodosLosDatos();
+    await cerrarSesion();
+    router.push('/');
+  }
+
+  async function salir() {
+    await cerrarSesion();
+    borrarTodosLosDatos(); // tus datos siguen en tu cuenta; no se quedan en un dispositivo compartido
     router.push('/');
   }
 
@@ -65,7 +86,10 @@ function PerfilContenido() {
     <AppShell>
       <div className="flex items-center gap-3">
         <Mascota size={44} />
-        <h1 className="text-[24px] font-bold leading-[1.15] [font-family:var(--font-display)]">Tu perfil</h1>
+        <div>
+          <h1 className="text-[24px] font-bold leading-[1.15] [font-family:var(--font-display)]">Tu perfil</h1>
+          {correo && <p className="text-[12px] text-[var(--text-secondary)]">{correo}</p>}
+        </div>
       </div>
 
       <section aria-label="Tu plan" className="mt-4 rounded-[var(--radius-card)] bg-[var(--surface)] p-4 shadow-[0_4px_12px_-4px_color-mix(in_oklab,var(--accent)_30%,transparent)]">
@@ -123,6 +147,11 @@ function PerfilContenido() {
                   <AlertCircle size={14} className="mt-0.5 shrink-0" /> Esto borra tus hábitos y todo tu historial en este
                   dispositivo. No se puede deshacer.
                 </p>
+                {errorBorrar && (
+                  <p aria-live="polite" className="flex items-start gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+                    <AlertCircle size={14} className="mt-0.5 shrink-0" /> No pudimos borrar tus datos de la cuenta. Revisa tu conexión e intenta de nuevo; no se borró nada.
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={borrar}
@@ -142,6 +171,10 @@ function PerfilContenido() {
           </AnimatePresence>
         </div>
       </section>
+
+      <div className="mt-3">
+        <Accion icono={<LogOut size={16} />} texto="Cerrar sesión" onClick={salir} />
+      </div>
 
       <nav aria-label="Información legal" className="mt-3 flex flex-col rounded-[var(--radius-card)] bg-[var(--surface)] px-4 shadow-[0_4px_12px_-4px_color-mix(in_oklab,var(--accent)_30%,transparent)]">
         {LEGALES.map((l, i) => (

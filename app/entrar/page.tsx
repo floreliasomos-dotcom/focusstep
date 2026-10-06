@@ -1,44 +1,81 @@
 'use client';
 
-// Login de FocusStep — 50-DISENO-ONBOARDING-PAYWALL.md §E. Magic link como método primario
-// (sin contraseñas, decisión Hotmart-first de 26-AUTH-MODERNO.md). El envío real (Resend +
-// Supabase Auth, y el botón "Continuar con Google") se conectan en Sesión 6 — el botón de Google se
-// quitó hasta entonces para no dejar un control tocable sin acción. Aquí el estado ENVIANDO/ENVIADO/ERROR es una
-// simulación honesta en el navegador (mock, ver C3ter del 50), nunca un envío real todavía.
+// Login de FocusStep — 50-DISENO-ONBOARDING-PAYWALL.md §E. Acceso SIN contraseña (decisión de
+// 26-AUTH-MODERNO.md): Supabase Auth manda un correo con un enlace de un solo uso y un código de
+// 6 dígitos; la persona usa el que le quede más cómodo. Los errores son genéricos a propósito
+// (no revelan si un correo ya existe). El botón de Google queda para una mejora posterior.
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
 import { Mail, AlertCircle } from 'lucide-react';
 import { BotonPrimario, FunnelShell } from '@/components/funnel/ui';
+import { crearClienteNavegador } from '@/lib/supabase/client';
 
-type Estado = 'idle' | 'enviando' | 'enviado' | 'error';
+type Estado = 'idle' | 'enviando' | 'enviado' | 'error' | 'fallo';
 
 export default function Entrar() {
+  // useSearchParams exige Suspense en páginas que se prerenderizan.
+  return (
+    <Suspense fallback={<FunnelShell><div className="flex-1" /></FunnelShell>}>
+      <EntrarContenido />
+    </Suspense>
+  );
+}
+
+function EntrarContenido() {
+  const router = useRouter();
+  const params = useSearchParams();
   const [email, setEmail] = useState('');
   const [estado, setEstado] = useState<Estado>('idle');
+  const [enlaceVencido, setEnlaceVencido] = useState(Boolean(params.get('error')));
   const [reenvioEn, setReenvioEn] = useState(0);
+  const [codigo, setCodigo] = useState('');
+  const [verificando, setVerificando] = useState(false);
+  const [codigoMalo, setCodigoMalo] = useState(false);
 
-  function enviar(e: React.FormEvent) {
+  // Cuenta regresiva del reenvío (una sola, sin acumular temporizadores).
+  useEffect(() => {
+    if (reenvioEn <= 0) return;
+    const t = setTimeout(() => setReenvioEn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [reenvioEn]);
+
+  async function enviar(e: React.FormEvent) {
     e.preventDefault();
     if (!email.includes('@') || !email.includes('.')) {
       setEstado('error');
       return;
     }
     setEstado('enviando');
-    setTimeout(() => {
-      setEstado('enviado');
-      setReenvioEn(60);
-      const iv = setInterval(() => {
-        setReenvioEn((s) => {
-          if (s <= 1) {
-            clearInterval(iv);
-            return 0;
-          }
-          return s - 1;
-        });
-      }, 1000);
-    }, 900);
+    const { error } = await crearClienteNavegador().auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback`, shouldCreateUser: true },
+    });
+    if (error) {
+      setEstado('fallo');
+      return;
+    }
+    setEstado('enviado');
+    setReenvioEn(60);
+  }
+
+  async function verificarCodigo(e: React.FormEvent) {
+    e.preventDefault();
+    if (codigo.trim().length < 6) {
+      setCodigoMalo(true);
+      return;
+    }
+    setVerificando(true);
+    setCodigoMalo(false);
+    const { error } = await crearClienteNavegador().auth.verifyOtp({ email: email.trim(), token: codigo.trim(), type: 'email' });
+    if (error) {
+      setVerificando(false);
+      setCodigoMalo(true);
+      return;
+    }
+    router.replace('/auth/listo');
   }
 
   return (
@@ -70,7 +107,8 @@ export default function Entrar() {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  if (estado === 'error') setEstado('idle');
+                  setEnlaceVencido(false);
+                  if (estado === 'error' || estado === 'fallo') setEstado('idle');
                 }}
                 placeholder="tu@correo.com"
                 aria-invalid={estado === 'error'}
@@ -80,6 +118,16 @@ export default function Entrar() {
                     : 'border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)]'
                 }`}
               />
+              {enlaceVencido && estado === 'idle' && (
+                <p aria-live="polite" className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+                  <AlertCircle size={14} /> Ese enlace ya se usó o venció. Pide uno nuevo aquí abajo.
+                </p>
+              )}
+              {estado === 'fallo' && (
+                <p aria-live="polite" className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+                  <AlertCircle size={14} /> No pudimos enviar el enlace. Espera un minuto e intenta de nuevo.
+                </p>
+              )}
               {estado === 'error' && (
                 <p aria-live="polite" className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
                   <AlertCircle size={14} /> Ese correo no se ve completo — revísalo e intenta de nuevo.
@@ -110,11 +158,43 @@ export default function Entrar() {
             <p className="max-w-[32ch] text-[16px] text-[var(--text-secondary)]">
               Te enviamos el enlace a <span className="font-semibold text-[var(--text-primary)]">{email}</span>
             </p>
+            <form onSubmit={verificarCodigo} className="flex w-full flex-col gap-3">
+              <label htmlFor="codigo" className="text-[12px] font-semibold text-[var(--text-secondary)]">
+                ¿Prefieres escribir el código de 6 dígitos?
+              </label>
+              <input
+                id="codigo"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={8}
+                value={codigo}
+                onChange={(e) => {
+                  setCodigo(e.target.value.replace(/D/g, ''));
+                  setCodigoMalo(false);
+                }}
+                placeholder="123456"
+                aria-invalid={codigoMalo}
+                className={`h-14 w-full rounded-[var(--radius-card)] border bg-[var(--surface)] px-4 text-center text-[24px] tracking-[0.3em] outline-none focus:border-[var(--accent)] ${
+                  codigoMalo ? 'border-[var(--error)]' : 'border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)]'
+                }`}
+              />
+              {codigoMalo && (
+                <p aria-live="polite" className="flex items-center justify-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+                  <AlertCircle size={14} /> Ese código no es válido o ya venció. Pide uno nuevo.
+                </p>
+              )}
+              <BotonPrimario type="submit" disabled={verificando}>
+                {verificando ? 'Entrando…' : 'Entrar con el código'}
+              </BotonPrimario>
+            </form>
             <button
               type="button"
               disabled={reenvioEn > 0}
-              onClick={() => setEstado('idle')}
-              className="text-[12px] font-semibold text-[var(--accent)] disabled:text-[var(--text-tertiary)]"
+              onClick={() => {
+                setCodigo('');
+                setEstado('idle');
+              }}
+              className="flex min-h-11 items-center px-3 text-[12px] font-semibold text-[var(--accent)] disabled:text-[var(--text-tertiary)]"
             >
               {reenvioEn > 0 ? `Reenviar en ${reenvioEn}s` : 'Reenviar enlace'}
             </button>

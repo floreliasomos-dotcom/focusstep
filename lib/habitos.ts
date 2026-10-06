@@ -75,13 +75,28 @@ function leer<T>(clave: string, valorDefecto: T): T {
   }
 }
 
-function escribir<T>(clave: string, valor: T): boolean {
+// La sincronización con la nube se engancha aquí: cada guardado local avisa al observador (si hay sesión).
+let alCambiar: (() => void) | null = null;
+export function observarCambios(fn: (() => void) | null): void {
+  alCambiar = fn;
+}
+
+function escribir<T>(clave: string, valor: T, avisar = true): boolean {
   try {
     localStorage.setItem(clave, JSON.stringify(valor));
+    if (avisar && alCambiar) alCambiar();
     return true;
   } catch {
     return false; // almacenamiento no disponible (privado/lleno) — el llamador decide qué avisar
   }
+}
+
+// Reemplaza los datos locales por los de la nube (al iniciar sesión). No dispara la subida.
+export function reemplazarDatosLocales(d: { habitos: Habito[]; registros: RegistroHabito[]; perfil: Perfil }): void {
+  escribir(CLAVE_HABITOS, d.habitos, false);
+  escribir(CLAVE_REGISTROS, d.registros, false);
+  escribir(CLAVE_PERFIL, d.perfil, false);
+  escribir(CLAVE_VERSION, VERSION_DATOS, false);
 }
 
 export function obtenerHabitos(): Habito[] {
@@ -393,7 +408,7 @@ export function exportarDatos() {
 
 export function borrarTodosLosDatos(): void {
   try {
-    [CLAVE_HABITOS, CLAVE_REGISTROS, CLAVE_PERFIL, CLAVE_DESHACER, CLAVE_VERSION, CLAVE_REINICIO_VISTO, CLAVE_EVENTOS_LOCAL].forEach((c) => localStorage.removeItem(c));
+    [CLAVE_HABITOS, CLAVE_REGISTROS, CLAVE_PERFIL, CLAVE_DESHACER, CLAVE_VERSION, CLAVE_REINICIO_VISTO, CLAVE_EVENTOS_LOCAL, 'focusstep_usuario'].forEach((c) => localStorage.removeItem(c));
     ['focusstep_onboarding', 'focusstep_plan_elegido'].forEach((c) => sessionStorage.removeItem(c));
   } catch {
     /* almacenamiento no disponible: no hay nada que borrar */

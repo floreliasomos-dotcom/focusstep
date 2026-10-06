@@ -7,12 +7,15 @@
 // interna compartan la misma animación al cambiar de tab (defecto real detectado por el
 // revisor-visual: faltaba una transición entre pantallas/tabs).
 
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { TabBar } from './TabBar';
+import { iniciarSubidaAutomatica } from '@/lib/sync';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
+  // Mientras la app interna está abierta, cada cambio se respalda en la cuenta (si hay sesión).
+  useEffect(() => iniciarSubidaAutomatica(), []);
   return (
     <div
       className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col overflow-hidden text-[var(--text-primary)] [font-family:var(--font-body)]"
