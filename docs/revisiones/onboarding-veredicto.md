@@ -1,16 +1,10 @@
-# VEREDICTO revisor-visual — onboarding
-Fecha: 2026-09-25 00:00
+# VEREDICTO revisor-visual — onboarding (pantalla de preguntas)
+Fecha: 2026-10-04 12:00
 Screenshot: docs/revisiones/onboarding-375.png
-Usabilidad: 38/40
-Craft: 18/20
+Usabilidad: 36/40
+Craft: 16/20
 Copy (si vende): N-A
 Fidelidad (si hubo referencia): N-A
 Veredicto: LISTA
-Top defectos:
-1. [Fondo global, FunnelShell] El mesh radial (26%/24%) sigue leyéndose casi plano porque acento y --bg comparten la misma familia cálida — sube a 32-34% en el radial superior o añade un segundo stop más frío para que el tinte se perciba sin lupa → mejora EJE 2 (hoy 3/4).
-2. [Pantalla Primera Victoria, botón circular "Completar"] No tiene atajo de teclado anunciado (las preguntas sí dicen "Tip: teclas 1-N") — añadir un hint sutil "o presiona Espacio" o dejarlo así está bien, pero es la única pantalla del flujo sin ese refuerzo → detalle menor de flexibilidad (h7).
-3. [Todo el flujo, app/onboarding/page.tsx] Cero manejo de error visible para fallos reales (sessionStorage bloqueado en modo privado, router.push fallido): no rompe la experiencia feliz pero un QA técnico lo detecta de inmediato → agregar try/catch con fallback silencioso antes de escalar tráfico.
-4. [Mascota, components/funnel/ui.tsx] El blob sigue siendo geométrico simple (2 puntos + arco); es reconocible pero no tan distintivo como podría con un detalle de firma adicional (textura, sombra propia) → EJE 3 pasa el test anti-clon pero no es un 4.
-5. [PantallaLoading] Las 4 líneas de "construyendo tu plan" entran todas ya visibles con solo opacity, sin stagger de entrada propio (dependen del check que se activa después) — un stagger iniical de 60-80ms entre líneas reforzaría el EJE 4.
-
-GATE: Usabilidad 38/40 (≥36 ✓) y Craft 18/20 (≥16 ✓) — CRUZA el gate doble. Los 3 fixes de la pasada anterior quedan confirmados: mesh de fondo ahora perceptible en pantalla completa (aunque sigue siendo el punto más débil del craft), contraste del eyebrow calculado en ~4.73:1 sobre --surface-2 (pasa AA 4.5:1), y el botón "Continuar" del campo de texto libre nunca queda disabled — solo no reacciona si el input está vacío, con el hint ya visible explicando por qué. No quedan bloqueantes para declarar esta pantalla LISTA.
+Top defectos: (1) P3 con "Otra cosa" abierta (onboarding-p3-otra-375.png): al aparecer scrollbar el ancho útil baja y la 1ª opción vuelve a partirse en 2 líneas; el pie "Tu avance se guarda solo" queda pegado al borde inferior (y~806 de 812). Fix: acortar el copy a "Las rachas rotas me hacían sentir mal" -> "Las rachas rotas me hacían sentir mal" con px-3 + text-[15px], o reducir el icono a 32px. (2) Texto de error/pie a 12px sobre fondo crema: legibilidad justa; subir a 13px o sumar peso 600. (3) Franja mascota+ayuda a 16px compite en peso con las opciones (mismo tamaño y casi mismo contraste): bajar la ayuda a 14px/ tono terciario para que el N2 (título) y N3 (opciones) manden. (4) En P3 la 1ª opción llega a ~12px del borde derecho de la tarjeta: padding derecho casi nulo, desencaje óptico leve. (5) Movimiento e identidad sin novedades; mascota clara y círculos terracota correctos con FICHA-ARTE (Baloo 2 + Nunito, radio 22px, #BD5227).
+Verificado en código: aria-live, aria-label, atajos de teclado 1-N, candado anti doble toque, guardado por respuesta, volver/cerrar visibles, reduced-motion presente.

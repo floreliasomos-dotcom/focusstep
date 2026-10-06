@@ -102,7 +102,7 @@ export function parseMarkedCopy(texto: string): ReactNode[] {
           tipo === 'acento' ? (
             <Accent key={key++}>{hijos}</Accent>
           ) : (
-            <strong key={key++} className="font-semibold">
+            <strong key={key++} className="font-semibold text-[var(--text-primary)]">
               {hijos}
             </strong>
           )

@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'motion/react';
-import { X, Check } from 'lucide-react';
+import { X, Check, AlertCircle } from 'lucide-react';
 import { BotonPrimario, FunnelShell, Mascota } from '@/components/funnel/ui';
 
 // Copy trazado a FICHA-AVATAR.md: cada feature ancla al dolor/deseo que resuelve,
@@ -84,7 +84,12 @@ export default function Paywall() {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === '1') setPlan('anual');
       else if (e.key === '2') setPlan('mensual');
-      else if (e.key === 'Enter') continuar();
+      else if (e.key === 'Enter') {
+        // Enter sobre un botón/enlace ("Ahora no", "Editar", la X) ya activa ese control: no debe disparar además el pago.
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === 'BUTTON' || tag === 'A') return;
+        continuar();
+      }
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
@@ -103,7 +108,7 @@ export default function Paywall() {
         >
           <X size={20} />
         </motion.button>
-        <p className="text-[12px] text-[var(--text-tertiary)]">Tip: usa 1, 2 y Enter</p>
+        <p className="hidden text-[12px] text-[var(--text-tertiary)] [@media(pointer:fine)]:block">Tip: usa 1, 2 y Enter</p>
       </div>
 
       <motion.div
@@ -178,8 +183,8 @@ export default function Paywall() {
             {enviando ? 'Un momento…' : 'Empezar mis 7 días gratis'}
           </BotonPrimario>
           {errorEnvio && (
-            <p aria-live="polite" className="mt-2 text-center text-[12px] font-semibold text-[var(--accent)]">
-              No pudimos guardar tu plan. Revisa tu conexión e intenta de nuevo.
+            <p aria-live="polite" className="mt-2 flex items-center justify-center gap-1.5 text-[12px] font-semibold text-[var(--error)]">
+              <AlertCircle size={14} /> No pudimos guardar tu plan. Revisa tu conexión e intenta de nuevo.
             </p>
           )}
           <p className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
@@ -320,7 +325,7 @@ function PlanCard({
           <span className="text-[12px] font-semibold text-[var(--text-secondary)]">/mes</span>
         </span>
       </div>
-      <p className="mt-1 text-[12px] text-[var(--accent)]">{totalAnual}</p>
+      <p className="mt-1 text-[12px] font-semibold text-[color-mix(in_oklab,var(--accent)_75%,var(--text-primary))]">{totalAnual}</p>
       <p className="mt-1 text-[12px] text-[var(--text-secondary)]">{precioDia}</p>
     </motion.button>
   );

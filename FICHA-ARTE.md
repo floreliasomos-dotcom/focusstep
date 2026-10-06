@@ -74,6 +74,16 @@
 - Acento #BD5227 con texto blanco encima (botones): 4.8:1 → pasa (mínimo 4.5:1)
 - Acento vs fondo (uso como ícono/dato, umbral UI 3:1): 4.3:1 → pasa sobrado
 
+## Cambios pedidos por el usuario (2026-10)
+- Íconos-azulejo de colores (estilo "Popular Sessions") probados en el cuestionario y DESCARTADOS por
+  el usuario tras 4 rondas de revisión (35→34→33→30/40): las opciones vuelven al círculo terracota
+  con glifo de 18px (la versión LISTA 38/40). Las 6 caritas de ánimo también quedaron fuera.
+- Mascota más clara (se conserva): cuerpo `--mascota` = terracota mezclado 58% con blanco
+  (≈ #D99B82), en vez del terracota pleno. Un solo token, aplicado en `Mascota`
+  (`components/funnel/ui.tsx`) → cambia en onboarding, paywall, Hoy y pantallas "próximamente".
+  Estado "contenta" sigue en menta.
+
+
 ## Color por hábito (ajuste pedido por el usuario tras ver el tour)
 - El usuario preguntó si cada SECCIÓN de la app podía tener un color distinto. Se recomendó en
   cambio color por HÁBITO (no por sección): mantiene el CTA, la mascota y la barra de navegación

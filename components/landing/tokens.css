@@ -31,11 +31,13 @@
        blanco en el CTA, insuficiente para AA; esta versión más profunda da 4.77:1 sin perder
        la familia cálida — mismo hue, más oscuro) ── */
   --accent: #BD5227;
+  --mascota: color-mix(in oklab, var(--accent) 58%, #FFFFFF); /* terracota aclarado — cuerpo de la mascota (pedido del usuario, 2026-10) */
   --accent-2: #F2A65A;         /* 2ª nota ámbar (FICHA-ARTE.md) — solo decorativa, nunca texto sobre ella */
 
   /* ── SEMÁNTICO ── */
   --success: #45BF9A;          /* menta — ÚNICO uso: estado "hecho" (FICHA-ARTE.md) */
   --error: #B3261E;            /* rojo cálido, familia de la paleta — SIEMPRE con ícono, nunca solo color */
+
 
   /* ── FORMA ── */
   --radius-card: 22px;

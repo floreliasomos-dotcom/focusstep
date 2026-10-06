@@ -1,15 +1,9 @@
 # VEREDICTO revisor-visual — paywall
-Fecha: 2026-09-26 00:00
+Fecha: 2026-10-04 13:00
 Screenshot: docs/revisiones/paywall-375.png
-Usabilidad: 38/40
+Usabilidad: 36/40
 Craft: 16/20
-Copy (si vende): 17/20
-Fidelidad (si hubo referencia): N-A
+Copy (si vende): 16/20
+Fidelidad (si hubo referencia): FIEL
 Veredicto: LISTA
-
-Top defectos:
-1. [Bajo el CTA "Empezar mis 7 días gratis"] Sigue sin garantía nombrada con plazo cerca del CTA de compra — límite estructural aceptado (FICHA-MERCADO.md aún no tiene el plazo de reembolso verificado con Hotmart, Sesión 6; nombrar uno ahora violaría el gate de integridad fail-closed). No se penaliza como descuido corregible hoy, pero sigue topando la objeción #4 de FICHA-AVATAR.md ("precio por día + garantía + trial") → nombrar la garantía con plazo real en cuanto Hotmart lo confirme.
-2. [Cada `PlanCard`, ej. "Anual"] Cada tarjeta muestra el precio en 3 formatos distintos (equivalente mensual "$2.92/mes" arriba, total anual "Se cobra $34.99/año..." al medio, precio diario "Menos de $0.10 al día" abajo) — mejoró vs. la ronda anterior (ya no hay bloque duplicado aparte) pero dentro de la misma card sigue siendo denso para una app que se vende "anti-abrumo" → conservar máximo 2 de los 3 formatos por card (p. ej. mensual + diario, mover el total anual a un tooltip o al resumen del checkout).
-3. [Headline, línea 2 "tu trabajo está listo"] El resaltado en acento cubre "tu trabajo", incluyendo el posesivo "tu" — la regla de énfasis pide resaltar solo la palabra clave que vende ("trabajo"), nunca partículas gramaticales → acotar el `<span className="text-[var(--accent)]">` solo a la palabra sustantiva (ej. envolver únicamente `{metaLabel.split(' ').slice(1).join(' ')}` si aplica, o resaltar solo el sustantivo final).
-4. [Recorrido completo hero → CTA] El scroll se acortó de forma real (se eliminó la tira de timeline), pero en dispositivos de viewport corto (iPhone SE ~667px, Android gama media compacta) el CTA sigue quedando fuera del primer pantallazo por la suma hero + features + 2 plan cards → en pantallas ≤700px de alto, considerar colapsar el tip de teclado (ya no aporta en touch-only) o reducir el padding vertical del `Bloque` de features.
-5. [Estructura DOM de `FunnelShell`] La pantalla completa es un único `div` sin `<main>`/`<header>` semánticos (regla UX #9 del SO) — no es exclusivo de este paywall (patrón compartido con onboarding), pero conviene resolverlo a nivel de componente compartido → envolver el contenido de `FunnelShell` en `<main>` y el bloque superior (X + tip) en `<header>`.
+Top defectos: (1) Margen minimo sobre el gate en las tres rubricas: cualquier regresion lo tumba. (2) Promesa "te avisamos antes del cobro" sin mecanismo en codigo (solo mock a /entrar): implementar el aviso o quitar la frase antes de cobrar de verdad (pendiente obligatorio Sesion 6); sin garantia nombrada con plazo cerca del CTA (aceptado por regla hasta verificar Hotmart). (3) Titular con acento en "tu trabajo": el articulo "tu" no debe resaltarse, dejar solo "trabajo" (span en h1 de app/paywall/page.tsx). (4) Tarjetas de plan con 3 formatos de precio (precio/mes, linea de cobro, precio por dia): unificar a 2 lineas con el mismo patron. (5) CTA en y~790 del lienzo, bajo el pliegue a 667px de alto, y shell sin <main>: compactar beneficios o CTA sticky; envolver en <main>. Correccion verificada: la linea de cobro de las tarjetas usa terracota oscurecido (color-mix 75% acento + 25% texto primario) en semibold, visiblemente mas oscuro en el screenshot, contraste AA cumplido. Verificado en codigo: error con var(--error)+AlertCircle y aria-live; Enter ignorado en BUTTON/A; CTA habilitado por defecto, 48px+, whileTap; stagger, conteo de precio y useReducedMotion presentes; sin celebracion de hito (no aplica al paywall). Paleta terracota + Baloo 2/Nunito + blob coincide con FICHA-ARTE; no es clon de los ejemplos vetados.

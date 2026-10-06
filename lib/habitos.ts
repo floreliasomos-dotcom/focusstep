@@ -240,3 +240,121 @@ export function semanaDeHoy(habitoId: string): { dias: DiaSemana[]; completados:
 
   return { dias, completados: dias.filter((d) => d.hecho).length };
 }
+
+// ───────────────────────── Gestión de hábitos (pantalla /habitos) ─────────────────────────
+// Plan gratis: máx. 3 hábitos ACTIVOS; con plan de pago (trial/anual/mensual) no hay límite.
+// En Sesión 6 el límite se valida también en servidor (RPC); aquí es el mismo contrato en local.
+
+export const LIMITE_GRATIS = 3;
+export const COLORES_HABITO = [
+  { valor: PALETA_TAGS[0], nombre: 'Ámbar' },
+  { valor: PALETA_TAGS[1], nombre: 'Menta' },
+  { valor: PALETA_TAGS[2], nombre: 'Terracota' },
+] as const;
+
+export function esPro(): boolean {
+  try {
+    const plan = sessionStorage.getItem('focusstep_plan_elegido');
+    return plan === 'anual' || plan === 'mensual';
+  } catch {
+    return false;
+  }
+}
+
+export function contarActivos(habitos: Habito[] = obtenerHabitos()): number {
+  return habitos.filter((h) => h.activo).length;
+}
+
+export function puedeActivarOtro(habitos: Habito[] = obtenerHabitos()): boolean {
+  return esPro() || contarActivos(habitos) < LIMITE_GRATIS;
+}
+
+export type ResultadoHabito = { ok: true; habitos: Habito[] } | { ok: false; error: 'limite' | 'guardado' | 'nombre' };
+
+export function crearHabito(datos: { nombre: string; momentoDia: MomentoDia; color: string }): ResultadoHabito {
+  const nombre = datos.nombre.trim();
+  if (nombre.length < 2) return { ok: false, error: 'nombre' };
+  const habitos = obtenerHabitos();
+  if (!puedeActivarOtro(habitos)) return { ok: false, error: 'limite' };
+  const nuevo: Habito = {
+    id: crypto.randomUUID(),
+    nombre: nombre.slice(0, 60),
+    color: datos.color,
+    momentoDia: datos.momentoDia,
+    activo: true,
+    creadoEn: new Date().toISOString(),
+  };
+  const lista = [...habitos, nuevo];
+  return escribir(CLAVE_HABITOS, lista) ? { ok: true, habitos: lista } : { ok: false, error: 'guardado' };
+}
+
+export function actualizarHabito(
+  id: string,
+  cambios: Partial<Pick<Habito, 'nombre' | 'momentoDia' | 'color'>>,
+): ResultadoHabito {
+  if (cambios.nombre !== undefined && cambios.nombre.trim().length < 2) return { ok: false, error: 'nombre' };
+  const lista = obtenerHabitos().map((h) =>
+    h.id === id ? { ...h, ...cambios, nombre: (cambios.nombre ?? h.nombre).trim().slice(0, 60) } : h,
+  );
+  return escribir(CLAVE_HABITOS, lista) ? { ok: true, habitos: lista } : { ok: false, error: 'guardado' };
+}
+
+// Archivar nunca borra: el historial de ese hábito se conserva y se puede reactivar (si hay cupo).
+export function alternarActivo(id: string): ResultadoHabito {
+  const actuales = obtenerHabitos();
+  const objetivo = actuales.find((h) => h.id === id);
+  if (!objetivo) return { ok: true, habitos: actuales };
+  if (!objetivo.activo && !puedeActivarOtro(actuales)) return { ok: false, error: 'limite' };
+  const lista = actuales.map((h) => (h.id === id ? { ...h, activo: !h.activo } : h));
+  return escribir(CLAVE_HABITOS, lista) ? { ok: true, habitos: lista } : { ok: false, error: 'guardado' };
+}
+
+// "Un Solo Foco": /hoy muestra el primer hábito ACTIVO de la lista; elegir el foco = ponerlo primero.
+export function ponerComoFoco(id: string): ResultadoHabito {
+  const actuales = obtenerHabitos();
+  const objetivo = actuales.find((h) => h.id === id && h.activo);
+  if (!objetivo) return { ok: true, habitos: actuales };
+  const lista = [objetivo, ...actuales.filter((h) => h.id !== id)];
+  return escribir(CLAVE_HABITOS, lista) ? { ok: true, habitos: lista } : { ok: false, error: 'guardado' };
+}
+
+// ───────────────────────── Historial (pantalla /progreso) ─────────────────────────
+// Un día cuenta si se completó AL MENOS un hábito ese día. Sin lenguaje punitivo: es un conteo
+// de días cumplidos por semana, nunca "días perdidos".
+
+export interface SemanaHistorial {
+  inicio: string; // lunes, 'YYYY-MM-DD'
+  etiqueta: string; // "12 oct"
+  dias: number; // 0-7
+  esActual: boolean;
+}
+
+function lunesDe(fecha: string): string {
+  const d = new Date(fecha + 'T00:00:00');
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return new Intl.DateTimeFormat('en-CA').format(d);
+}
+
+export function historialSemanas(cantidad = 8): { semanas: SemanaHistorial[]; totalDias: number; mejorSemana: number } {
+  const fechas = new Set(obtenerRegistros().map((r) => r.fecha));
+  const porSemana = new Map<string, number>();
+  fechas.forEach((f) => {
+    const l = lunesDe(f);
+    porSemana.set(l, (porSemana.get(l) ?? 0) + 1);
+  });
+  const lunesActual = lunesDe(hoyLocal());
+  const semanas: SemanaHistorial[] = [];
+  for (let i = cantidad - 1; i >= 0; i--) {
+    const d = new Date(lunesActual + 'T00:00:00');
+    d.setDate(d.getDate() - 7 * i);
+    const inicio = new Intl.DateTimeFormat('en-CA').format(d);
+    semanas.push({
+      inicio,
+      etiqueta: new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short' }).format(d).replace('.', ''),
+      dias: porSemana.get(inicio) ?? 0,
+      esActual: i === 0,
+    });
+  }
+  const mejorSemana = Math.max(0, ...Array.from(porSemana.values()));
+  return { semanas, totalDias: fechas.size, mejorSemana };
+}

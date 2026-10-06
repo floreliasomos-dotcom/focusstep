@@ -6,13 +6,13 @@
 // este flujo corre 100% en el navegador y pasa las respuestas al paywall por sessionStorage
 // (mock honesto, ver C3ter del 50).
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   RotateCcw,
   Frown,
-  ListTodo,
+  Layers,
   Clock3,
   Sunrise,
   Briefcase,
@@ -22,6 +22,8 @@ import {
   Snowflake,
   XCircle,
   Puzzle,
+  PencilLine,
+  AlertCircle,
   BellOff,
 } from 'lucide-react';
 import { BarraProgreso, BotonPrimario, Chip, FunnelShell, Mascota, PasoTransicion } from '@/components/funnel/ui';
@@ -29,16 +31,18 @@ import { BarraProgreso, BotonPrimario, Chip, FunnelShell, Mascota, PasoTransicio
 const PREGUNTAS = [
   {
     id: 'problema',
+    ayuda: 'Así empezamos por lo que más pesa hoy.',
     pregunta: '¿Qué es lo que más te cuesta ahora mismo?',
     opciones: [
       { label: 'Empezar y abandonar a la semana', icon: RotateCcw },
       { label: 'La culpa de fallar un día', icon: Frown },
-      { label: 'Tener demasiadas cosas en la lista', icon: ListTodo },
+      { label: 'Tener demasiadas cosas en la lista', icon: Layers },
       { label: 'Sentir que no me alcanza el tiempo', icon: Clock3 },
     ],
   },
   {
     id: 'paralisis',
+    ayuda: 'Esto define cuántos pasos te mostramos a la vez.',
     pregunta: '¿Qué tanto te paraliza ver una lista larga de pendientes?',
     opciones: [
       { label: 'Un poco, pero avanzo', icon: TrendingUp },
@@ -48,16 +52,18 @@ const PREGUNTAS = [
   },
   {
     id: 'fracasos',
+    ayuda: 'Así evitamos repetir lo que te hizo dejarlas.',
     pregunta: '¿Qué te ha hecho dejar otras apps de hábitos?',
     opciones: [
       { label: 'Las rachas rotas me hacían sentir mal', icon: XCircle },
       { label: 'Eran complicadas de usar', icon: Puzzle },
       { label: 'Se me olvidaba entrar', icon: BellOff },
-      { label: 'Otra cosa (escribe la tuya)', escape: true },
+      { label: 'Otra cosa (escribe la tuya)', icon: PencilLine, escape: true },
     ],
   },
   {
     id: 'momento',
+    ayuda: 'Ahí es donde pondremos tu recordatorio.',
     pregunta: '¿En qué momento del día más lo necesitas?',
     opciones: [
       { label: 'Mis mañanas', icon: Sunrise },
@@ -109,9 +115,21 @@ export default function Onboarding() {
   const totalPasos = PREGUNTAS.length + 3; // + reconocimiento + victoria + loading
   const pct = Math.min(8 + (paso / totalPasos) * 92, 100);
 
-  function elegir(idPregunta: string, valor: string) {
+  const eligiendo = useRef(false);
+
+  function elegir(idPregunta: string, valor: string, conTeclado = false) {
+    // Un doble toque o una tecla repetida durante los 300 ms de transición saltaba una pregunta.
+    if (eligiendo.current) return;
+    eligiendo.current = true;
     const nuevasRespuestas = { ...respuestas, [idPregunta]: valor };
     setRespuestas(nuevasRespuestas);
+    // Se guarda en cada respuesta (no solo al final): un toque accidental en la X ya no borra el
+    // avance — al volver, el cuestionario retoma donde quedó (defecto real de la 3ª revisión).
+    try {
+      sessionStorage.setItem('focusstep_onboarding', JSON.stringify(nuevasRespuestas));
+    } catch {
+      /* sin sessionStorage: el avance vive solo en memoria */
+    }
     const esUltimaPregunta = idPregunta === PREGUNTAS[PREGUNTAS.length - 1].id;
     setTimeout(() => {
       if (modoEdicion && esUltimaPregunta) {
@@ -120,7 +138,8 @@ export default function Onboarding() {
       } else {
         setPaso((p) => p + 1);
       }
-    }, 300);
+      eligiendo.current = false;
+    }, conTeclado ? 150 : 500);
   }
 
   function atras() {
@@ -155,7 +174,7 @@ export default function Onboarding() {
               seleccionado={respuestas[PREGUNTAS[paso].id]}
               otraCosa={otraCosa}
               onOtraCosa={setOtraCosa}
-              onElegir={(v) => elegir(PREGUNTAS[paso].id, v)}
+              onElegir={(v, conTeclado) => elegir(PREGUNTAS[paso].id, v, conTeclado)}
               esUltima={paso === PREGUNTAS.length - 1}
             />
           </PasoTransicion>
@@ -203,71 +222,131 @@ function PantallaPregunta({
   seleccionado?: string;
   otraCosa: string;
   onOtraCosa: (v: string) => void;
-  onElegir: (v: string) => void;
+  onElegir: (v: string, conTeclado?: boolean) => void;
   esUltima: boolean;
 }) {
+  const reduceMov = useReducedMotion();
   const [mostrarInput, setMostrarInput] = useState(false);
-  const tieneEscape = pregunta.opciones.some((op) => 'escape' in op && op.escape);
+  const [intentoVacio, setIntentoVacio] = useState(false);
+  const campoRef = useRef<HTMLInputElement>(null);
+  const accionRef = useRef<HTMLDivElement>(null);
 
-  function elegirOpcion(op: (typeof pregunta.opciones)[number]) {
+  // Con "Otra cosa" abierta el contenido pasa del alto de la pantalla: se asegura que el botón
+  // "Continuar" quede completo a la vista (defecto real de la 4ª revisión).
+  useEffect(() => {
+    if (!mostrarInput) return;
+    const t = setTimeout(() => accionRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }), 120);
+    return () => clearTimeout(t);
+  }, [mostrarInput]);
+
+  function elegirOpcion(op: (typeof pregunta.opciones)[number], conTeclado = false) {
     if ('escape' in op && op.escape) setMostrarInput(true);
-    else onElegir(op.label);
+    else {
+      setMostrarInput(false);
+      onElegir(op.label, conTeclado);
+    }
   }
 
-  return (
-    <div
-      className="flex flex-1 flex-col pt-6"
-      onKeyDown={
-        tieneEscape
-          ? undefined
-          : (e) => {
-              const n = Number(e.key);
-              if (n >= 1 && n <= pregunta.opciones.length) elegirOpcion(pregunta.opciones[n - 1]);
-            }
+  // Escucha en window: un onKeyDown sobre el div solo se dispara si el foco ya está dentro de él
+  // (tras tocar una opción el foco queda en <body> y los atajos no respondían — bug real).
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      // Los dígitos escritos dentro del campo "Otra cosa" no son atajos (bug real ya corregido antes).
+      if ((e.target as HTMLElement).tagName === 'INPUT') return;
+      const n = Number(e.key);
+      if (n >= 1 && n <= pregunta.opciones.length) {
+        // Sin esto, el dígito del atajo se escribía dentro del campo que el propio atajo abre ("Otra cosa").
+        e.preventDefault();
+        elegirOpcion(pregunta.opciones[n - 1], true);
       }
-    >
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pregunta]);
+
+  // Si ya había una respuesta de texto libre guardada (volver atrás / retomar), se reabre el campo
+  // con lo escrito en vez de perderlo.
+  useEffect(() => {
+    const tieneEscape = pregunta.opciones.some((op) => 'escape' in op && op.escape);
+    if (tieneEscape && seleccionado && !pregunta.opciones.some((op) => op.label === seleccionado)) {
+      setMostrarInput(true);
+      onOtraCosa(seleccionado);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="flex flex-1 flex-col pt-6">
       <h1 className="text-balance text-[32px] font-bold leading-[1.15] [font-family:var(--font-display)]">
         {pregunta.pregunta}
       </h1>
-      {!tieneEscape && (
-        <p className="mt-1 text-[12px] text-[var(--text-tertiary)]">Tip: puedes usar las teclas 1-{pregunta.opciones.length}</p>
-      )}
-      <div className="mt-8 flex flex-col gap-3">
+      <div className="mt-3 flex items-center gap-3 rounded-[var(--radius-card)] bg-[var(--surface-2)] p-3">
+        <motion.div
+          className="shrink-0"
+          animate={seleccionado && !reduceMov ? { scale: [1, 1.25, 1] } : { scale: 1 }}
+          transition={{ duration: 0.35 }}
+        >
+          <Mascota size={44} contenta={Boolean(seleccionado)} />
+        </motion.div>
+        <p className="text-[16px] leading-snug text-[var(--text-secondary)]">
+          {pregunta.ayuda}
+        </p>
+      </div>
+      <div className="mt-6 flex flex-col gap-3">
         {pregunta.opciones.map((op, i) => (
           <Chip
             key={op.label}
             label={op.label}
             icon={'icon' in op ? op.icon : undefined}
-            seleccionado={seleccionado === op.label}
+            seleccionado={seleccionado === op.label || ('escape' in op && op.escape === true && mostrarInput)}
             indice={i}
             onClick={() => elegirOpcion(op)}
           />
         ))}
       </div>
       {mostrarInput && (
-        <div className="mt-4 flex flex-col gap-3">
+        <div ref={accionRef} className="mt-4 flex scroll-mb-6 flex-col gap-3">
           <input
+            ref={campoRef}
             autoFocus
             value={otraCosa}
-            onChange={(e) => onOtraCosa(e.target.value)}
+            onChange={(e) => {
+              onOtraCosa(e.target.value);
+              setIntentoVacio(false);
+            }}
             placeholder="Cuéntame con tus palabras"
+            aria-label="Escribe tu propia respuesta"
             className="h-14 w-full rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--text-secondary)_25%,transparent)] bg-[var(--surface)] px-4 text-[16px] outline-none focus:border-[var(--accent)]"
           />
           {!otraCosa.trim() && (
-            <p className="text-[12px] text-[var(--text-secondary)]">Escribe algo para poder continuar.</p>
+            <p
+              aria-live="polite"
+              className={`flex items-center gap-1.5 text-[12px] ${intentoVacio ? 'font-semibold text-[var(--error)]' : 'text-[var(--text-secondary)]'}`}
+            >
+              {intentoVacio && <AlertCircle size={14} />} Escribe algo para poder continuar.
+            </p>
           )}
-          <BotonPrimario onClick={() => otraCosa.trim() && onElegir(otraCosa.trim())}>
+          <BotonPrimario
+            onClick={() => {
+              if (otraCosa.trim()) onElegir(otraCosa.trim());
+              else {
+                setIntentoVacio(true);
+                campoRef.current?.focus();
+              }
+            }}
+          >
             Continuar
           </BotonPrimario>
         </div>
       )}
-      <div className="flex-1" aria-hidden="true" />
-      <div className="flex h-40 shrink-0 flex-col items-center justify-center gap-2 opacity-90">
-        <Mascota size={64} />
-        <p className="text-[12px] font-medium text-[var(--text-secondary)]">
-          {esUltima ? 'Ya casi terminas' : 'Te acompaño en esto'}
-        </p>
-      </div>
+      <p className="mt-6 text-center text-[12px] text-[var(--text-tertiary)]">
+        Tu avance se guarda solo
+        <span className="hidden [@media(pointer:fine)]:inline">
+          {' '}
+          · Tip: teclas 1-{pregunta.opciones.length}
+        </span>
+      </p>
     </div>
   );
 }
@@ -279,6 +358,10 @@ function PantallaReconocimiento({
   respuestas: Respuestas;
   onContinuar: () => void;
 }) {
+  const OPCIONES_CONOCIDAS = PREGUNTAS[2].opciones.map((o) => o.label as string);
+  const fracasos = respuestas.fracasos ?? '';
+  const esTextoLibre = fracasos !== '' && !OPCIONES_CONOCIDAS.includes(fracasos);
+  const textoLibre = fracasos.length > 60 ? fracasos.slice(0, 57).trimEnd() + '…' : fracasos;
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 py-10 text-center">
       <Mascota size={72} />
@@ -290,7 +373,9 @@ function PantallaReconocimiento({
         <span className="font-semibold text-[var(--text-primary)]">
           {respuestas.fracasos?.toLowerCase().includes('rachas')
             ? 'fue porque justo el día que más lo necesitabas, la app te mostró un cero'
-            : 'fue porque el sistema te pedía más de lo que un mal día te permite'}
+            : esTextoLibre
+              ? `fue porque ningún sistema se adaptó a lo que tú viviste: «${textoLibre}»`
+              : 'fue porque el sistema te pedía más de lo que un mal día te permite'}
         </span>
         . Eso termina hoy: un solo paso a la vez, sin castigo por los días difíciles.
       </p>

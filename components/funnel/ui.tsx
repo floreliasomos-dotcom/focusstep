@@ -21,11 +21,11 @@ export function Mascota({ size = 64, contenta = false }: { size?: number; conten
         width: size,
         height: size * 0.92,
         borderRadius: '61% 39% 55% 45% / 45% 55% 42% 58%',
-        background: contenta ? 'var(--success)' : 'var(--accent)',
+        background: contenta ? 'var(--success)' : 'var(--mascota)',
       }}
     >
-      <span className="absolute rounded-full bg-[var(--text-primary)]" style={{ width: size * 0.06, height: size * 0.06, left: '34%', top: '40%' }} />
-      <span className="absolute rounded-full bg-[var(--text-primary)]" style={{ width: size * 0.06, height: size * 0.06, left: '58%', top: '40%' }} />
+      <span className="absolute rounded-full bg-[var(--text-primary)]" style={{ width: size * 0.1, height: size * 0.1, left: '34%', top: '40%' }} />
+      <span className="absolute rounded-full bg-[var(--text-primary)]" style={{ width: size * 0.1, height: size * 0.1, left: '58%', top: '40%' }} />
       <span
         className="absolute rounded-b-full border-b-2 border-[var(--text-primary)]"
         style={{ width: size * 0.18, height: size * 0.1, left: '41%', top: '54%' }}
@@ -89,7 +89,7 @@ export function BarraProgreso({
             className="h-full rounded-full bg-[var(--accent)]"
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
-            transition={{ duration: reduce ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 140, damping: 18 }}
           />
         </div>
         {onSalir && (
@@ -104,7 +104,7 @@ export function BarraProgreso({
         )}
       </div>
       {pasoActual && totalPasos && (
-        <p className="pl-14 text-[12px] font-semibold text-[var(--text-secondary)]">
+        <p aria-live="polite" className="text-[12px] font-semibold text-[var(--text-secondary)]">
           Pregunta {pasoActual} de {totalPasos}
         </p>
       )}
@@ -134,10 +134,10 @@ export function Chip({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: reduce ? 0.1 : 0.25, delay: reduce ? 0 : indice * 0.07 }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
-      className={`flex min-h-14 w-full items-center gap-3 rounded-[var(--radius-card)] border px-4 py-3 text-left text-[16px] font-medium transition-colors ${
+      className={`flex min-h-16 w-full items-center gap-3 rounded-[var(--radius-card)] border px-3 py-3 text-left text-[16px] font-medium transition-colors ${
         seleccionado
           ? 'border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_10%,transparent)]'
-          : 'border-[color-mix(in_oklab,var(--text-secondary)_22%,transparent)] bg-[var(--surface)]'
+          : 'border-[color-mix(in_oklab,var(--text-secondary)_22%,transparent)] bg-[var(--surface)] shadow-[0_4px_12px_-4px_color-mix(in_oklab,var(--accent)_30%,transparent)]'
       }`}
     >
       {Icon && (
@@ -148,7 +148,7 @@ export function Chip({
           <Icon size={18} color="var(--accent)" />
         </span>
       )}
-      <span className="flex-1">{label}</span>
+      <span className="flex-1 text-balance">{label}</span>
       {seleccionado && (
         <motion.span
           initial={{ scale: reduce ? 1 : 0.5, opacity: 0 }}

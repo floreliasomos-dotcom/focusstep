@@ -69,8 +69,8 @@ export default function Home() {
       <Agitacion
         frases={[
           'Cada vez que abandonas un sistema, [b]vuelves a fojas cero[/b] con la confianza un poco más golpeada.',
-          'Si nada cambia, en 6 meses sigues empezando de nuevo cada lunes — otra vez desde cero.',
-          'Más listas y más apps no resuelven la culpa: la [acento]causa[/acento] es que castigan tus días difíciles.',
+          'Si nada cambia, en 6 meses sigues [b]empezando de nuevo cada lunes[/b] — otra vez desde cero.',
+          'Más listas y más apps no resuelven la culpa: la causa es que [acento]castigan tus días difíciles[/acento].',
         ]}
         contraste={{
           labelHoy: 'Hoy',

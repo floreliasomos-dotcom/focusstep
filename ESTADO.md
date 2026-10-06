@@ -1,10 +1,15 @@
 # ESTADO DEL PROYECTO — FocusStep
 
-Última actualización: 2026-09-29 · Fase: Sesión 4 CERRADA. Sesión 5 EN CURSO — app interna.
-Pantalla `/hoy` (M0) **LISTA** (6ª pasada: 37/40, 16/20) — las 4 pantallas del dinero
-(landing, onboarding, paywall, hoy) ya pasaron el gate del revisor-visual. Próximo paso:
-`/habitos` (crear/editar hasta 3 hábitos) y `/progreso` — ambas secundarias, solo necesitan
-medición + checklist.
+Última actualización: 2026-10-05 · Fase: Sesión 5 EN PAUSA — AUDITORÍA 10/10 ENTREGADA, ESPERANDO
+APROBACIÓN DEL USUARIO (regla: no se toca nada hasta que apruebe). Las 4 pantallas del dinero pasaron
+el gate (hoy 37/40 · landing 36/40 · onboarding 36/40 · paywall 36/40, tres por margen mínimo).
+Puntaje de la auditoría: 5/10 como producto vendible (frontend ~7.5/10; cuentas, datos, pagos,
+seguridad y medición ~1-2/10 porque aún no existen — todo es simulación en el navegador).
+`/habitos` (+ `components/app/FormularioHabito.tsx` + funciones nuevas en `lib/habitos.ts`) quedó
+ESCRITA A MEDIAS: compila y el formulario abre, pero NO pasó medición/checklist ni pruebas de
+límite/edición; `/progreso` y `/perfil` siguen como "próximamente". El usuario también pidió el
+paso a paso de las cuentas externas (GitHub, Supabase, Vercel, Resend, Hotmart, dominio) — entregado
+en el chat, aún sin ejecutar.
 
 ## Idea y avatar (Sesión 1 — cosa juzgada, detalle completo en las fichas)
 
@@ -130,7 +135,25 @@ Margen sano a $4.99/mes — gate de costo (SUELO 1) pasa sin modelar escenarios.
 
 ## Problemas conocidos
 
-- [veredicto:landing], [veredicto:onboarding] y [veredicto:paywall] se marcan CADUCADOS cada
+- [veredicto:onboarding] LISTA por margen mínimo (2026-10-04, 9ª pasada de este ciclo: 30→31→32→33→34→35→
+  36/40; craft 16/20). Errores REALES corregidos en el camino: la X borraba el avance (ahora se guarda por
+  respuesta y retoma), doble toque saltaba una pregunta (candado), atajos 1-N no respondían tras tocar
+  una opción (listener en window), la tecla 4 escribía "4" en "Otra cosa" (preventDefault), "Otra cosa"
+  no se cerraba ni reabría con lo escrito, "Continuar" vacío sin feedback (ahora enfoca el campo y
+  muestra error --error con ícono), la 1ª opción de P3 partida (padding px-3, cabe en 1 línea a 375px),
+  el botón Continuar quedaba fuera de pantalla con el campo abierto (scrollIntoView), campo sin etiqueta
+  accesible (aria-label), espera de 500ms lenta con teclado (150ms con atajo). NO se subió el texto de
+  12px a 13-14px (la escala 4·8·12·16·24·32·48·64 del linter solo admite 12 o 16). Pulido abierto no
+  bloqueante: con la barra de scroll visible o a 360px la 1ª opción de P3 puede volver a partirse; ayuda
+  de 16px compite algo con las opciones; textos de 12px justos; sin celebración de hito en las preguntas.
+- [veredicto:landing] LISTA (36/40, 18/20, 18/20) tras corregir el resaltado: la 1ª versión tenía ~45%
+  del texto en negrita (35/40); ahora una frase clave por párrafo, `[b]` en `--text-primary` y el
+  acento en "castigan tus días difíciles". Notas menores abiertas: "fojas cero" es modismo regional
+  (el revisor sugiere "empezar de cero"; es copy del usuario, se dejó), count-up de precios.
+- [pendiente Sesión 6, OBLIGATORIO antes de cobrar] El paywall dice "te avisamos antes del cobro" y
+  "cancela cuando quieras", pero hoy es un mock a `/entrar`: el aviso por correo y la cancelación no
+  existen. Hay que implementarlos (Resend + Hotmart) o quitar esas frases antes de vender de verdad.
+- [veredicto:landing] y [veredicto:paywall] se marcan CADUCADOS cada
   vez que se toca cualquier `.tsx` compartido del funnel (`app/entrar/page.tsx`,
   `components/funnel/ui.tsx`) por la heurística de frescura del hook — son falsos positivos:
   esos archivos no cambian el render de `/`, `/onboarding` ni `/paywall`. Los tres veredictos
@@ -153,6 +176,25 @@ Margen sano a $4.99/mes — gate de costo (SUELO 1) pasa sin modelar escenarios.
   pulido: (a) la racha en 0 no muestra ninguna línea (vacío solo en el caso más común, día 1);
   (b) el título del "Modo Día Difícil" puede desbordar a 3 líneas con nombres de hábito largos;
   (c) sin atajos de eficiencia para el uso diario repetido (swipe-to-complete, etc.).
+
+## Auditoría 10/10 (2026-10-05) — hallazgos pendientes de aprobación
+
+**Críticos:** (1) todo es simulación: login sin envío, botón Google sin acción, paywall sin cobro, datos solo
+en localStorage, app accesible sin pagar; (2) Next 16.3.5 con falla crítica (GHSA-vcvr-r3jv-pc5j, next/og)
+→ actualizar a 16.3.8 antes de publicar; (3) promesas de copy sin respaldo: "prueba de 7 días no pide
+tarjeta" (hero) vs "primer cobro Día 7" (paywall), "te avisamos antes del cobro", "cancela cuando
+quieras", correo soporte@focusstep.app inexistente; (4) Progreso/Perfil "próximamente", sin cancelar/
+cerrar sesión/borrar datos (la política de privacidad lo promete).
+**Importantes:** Reinicio Amigable sin pantalla; "gana un pase libre a los 7 días" pero `congeladores` nunca
+sube; barra de navegación se encoge a ~300px con poco contenido (falta w-full en AppShell); botón Google
+muerto; sin recordatorios; sin analítica; 11 errores de lint (hook `usarConteo` en paywall, setState en
+efectos, `<a>` en vez de Link) y 0 tests/CI; sin cabeceras de seguridad; sin OG/sitemap/robots/manifest;
+notas abiertas de revisores (3 formatos de precio, CTA bajo pliegue a 667px, sin `<main>`).
+**Pulido:** 404/error por defecto en inglés; menta duplicada (hecho vs color de hábito); "1 activos"; datos
+locales sin versión; peso de JS ~870 KB sin medir con Lighthouse.
+**Top 3 para 10/10:** Sesión 6 completa (Supabase + auth + RLS + Hotmart + puertas de plan) · cumplir lo
+prometido (Reinicio Amigable, pases reales, Progreso, Perfil, recordatorios) · limpiar antes de publicar
+(Next, claims, tests, cabeceras, medición).
 
 ## Próximo paso
 
